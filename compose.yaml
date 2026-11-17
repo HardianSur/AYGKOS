@@ -1,0 +1,30 @@
+services:
+    pgsql:
+        image: postgres:16-alpine
+        container_name: aygkos-pgsql
+        environment:
+            POSTGRES_DB: aygkos
+            POSTGRES_USER: aygkos
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - '5432:5432'
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U aygkos -d aygkos']
+            interval: 5s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
+
+    mailpit:
+        image: axllent/mailpit:latest
+        container_name: aygkos-mailpit
+        profiles:
+            - mail
+        ports:
+            - '1025:1025'
+            - '8025:8025'
+
+volumes:
+    pgdata:
