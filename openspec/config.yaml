@@ -30,3 +30,17 @@ schema: spec-driven
 #     archive:
 #       guidance:
 #         - Summarize the archive outcome before finishing
+
+context: |
+  Dokumen ERD dan Functional Requirement memakai penomoran versi per dokumen.
+  Versi terkini di berkas utama; versi lama beku di logs/ dengan nama
+  V<3 digit>-<dokumen>.md. Waktu: dd-mm-yyyy:HH:MM WIB.
+
+rules:
+  proposal:
+    - Jika change mengubah isi docs/ERD/erd.md atau
+      docs/FunctionalRequirment/functional_requirment.md, sebut versi tujuan
+      (mis. ERD V003) di bagian Impact.
+  tasks:
+    - Sertakan tugas memensiunkan versi lama ke logs/ dan menambah baris
+      release.md dalam change yang sama, bukan change terpisah.
