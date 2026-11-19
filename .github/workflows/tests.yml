@@ -13,6 +13,28 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: aygkos
+          POSTGRES_USER: aygkos
+          POSTGRES_PASSWORD: secret
+        ports:
+          - '5432:5432'
+        options: >-
+          --health-cmd "pg_isready -U aygkos -d aygkos"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_USERNAME: aygkos
+      DB_PASSWORD: secret
+
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -23,6 +45,7 @@ jobs:
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: '8.5'
+          extensions: pdo_pgsql, pgsql
           tools: composer:v2
           coverage: none
 
@@ -31,8 +54,13 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Create testing database
+        run: psql -h 127.0.0.1 -U aygkos -d aygkos -c 'CREATE DATABASE aygkos_testing;'
+        env:
+          PGPASSWORD: secret
+
       - name: Setup Application
         run: composer setup
 
-      # - name: Run CI Checks
-      #   run: composer ci:check
+      - name: Run CI Checks
+        run: composer ci:check

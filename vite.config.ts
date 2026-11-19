@@ -72,11 +72,12 @@ export default defineConfig({
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',
+            '**/*.md',
+            'openspec/**',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],
             stylesheet: 'resources/css/app.css',
         },
     },
-
 });
