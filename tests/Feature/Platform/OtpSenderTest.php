@@ -32,6 +32,7 @@ it('mengembalikan FonnteOtpSender saat driver fonnte dan token tersedia', functi
 });
 
 it('mengirim kode OTP ke endpoint Fonnte dengan token dari konfigurasi', function () {
+    config()->set('otp.driver', 'fonnte');
     config()->set('services.fonnte.token', 'token-uji');
     config()->set('services.fonnte.endpoint', 'https://api.fonnte.com/send');
 
@@ -47,6 +48,7 @@ it('mengirim kode OTP ke endpoint Fonnte dengan token dari konfigurasi', functio
 });
 
 it('tidak melempar galat saat Fonnte menolak permintaan', function () {
+    config()->set('otp.driver', 'fonnte');
     config()->set('services.fonnte.token', 'token-uji');
     config()->set('services.fonnte.endpoint', 'https://api.fonnte.com/send');
 
@@ -59,6 +61,7 @@ it('tidak melempar galat saat Fonnte menolak permintaan', function () {
 });
 
 it('tidak melempar galat saat koneksi ke Fonnte gagal', function () {
+    config()->set('otp.driver', 'fonnte');
     config()->set('services.fonnte.token', 'token-uji');
     config()->set('services.fonnte.endpoint', 'https://api.fonnte.com/send');
 
