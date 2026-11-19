@@ -16,4 +16,5 @@ Berkas ini mencatat setiap versi dokumen yang dipensiunkan ke `logs/`. Satu doku
 | Versi | Berkas | Dibuat | Dipensiunkan | Jenis | Ringkasan | Alasan | Rujukan |
 |---|---|---|---|---|---|---|---|
 | V001 | logs/V001-erd.md | 17-11-2026:17:45 WIB | 17-11-2026:23:43 WIB | minor | Baseline ERD: 11 entitas, relasi, enumerasi, constraint | Diganti V002 | - |
-| V002 | erd.md | 17-11-2026:23:43 WIB | - | minor | Tabel `kost` menjadi `kosts`; kolom `users.remember_token`; `users.full_name` menjadi `users.name`; catatan tabel framework di luar cakupan | Menyesuaikan konvensi nama tabel Laravel dan kolom yang dipakai scaffold | - |
+| V002 | logs/V002-erd.md | 17-11-2026:23:43 WIB | 18-11-2026:16:10 WIB | minor | Tabel `kost` menjadi `kosts`; kolom `users.remember_token`; `users.full_name` menjadi `users.name`; catatan tabel framework di luar cakupan | Diganti V003 | - |
+| V003 | erd.md | 18-11-2026:16:10 WIB | - | minor | Seluruh nama tabel domain menjadi bentuk plural: `roles`, `whatsapp_verifications`, `kost_photos`, `facilities`, `kost_facilities`, `rooms`, `complaints`, `complaint_attachments`, `notifications`; tabel framework tetap di luar cakupan | Menyesuaikan konvensi plural snake_case agar migration dan model tidak menimpa nama tabel | `erd-schema-and-models` |

@@ -1,29 +1,29 @@
 # ERD AYGKOS
 
-## Versi V002
+## Versi V003
 
-Dibuat: 17-11-2026:23:43 WIB
+Dibuat: 18-11-2026:16:10 WIB
 Dipensiunkan: -
 
 ## Daftar Entitas
 
 | No | Tabel | Fungsi |
 |---|---|---|
-| 1 | role | Peran pengguna |
+| 1 | roles | Peran pengguna |
 | 2 | users | Akun Customer, Pemilik Kost, dan Admin |
-| 3 | whatsapp_verification | Kode OTP verifikasi nomor WhatsApp Pemilik Kost |
+| 3 | whatsapp_verifications | Kode OTP verifikasi nomor WhatsApp Pemilik Kost |
 | 4 | kosts | Data kost beserta status verifikasi |
-| 5 | kost_photo | Foto kost |
-| 6 | facility | Master fasilitas |
-| 7 | kost_facility | Relasi banyak ke banyak antara kost dan fasilitas |
-| 8 | room | Kamar pada kost |
-| 9 | complaint | Aduan pengguna |
-| 10 | complaint_attachment | Lampiran aduan |
-| 11 | notification | Notifikasi in-app |
+| 5 | kost_photos | Foto kost |
+| 6 | facilities | Master fasilitas |
+| 7 | kost_facilities | Relasi banyak ke banyak antara kost dan fasilitas |
+| 8 | rooms | Kamar pada kost |
+| 9 | complaints | Aduan pengguna |
+| 10 | complaint_attachments | Lampiran aduan |
+| 11 | notifications | Notifikasi in-app |
 
 ## Struktur Tabel
 
-### role
+### roles
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
@@ -36,7 +36,7 @@ Dipensiunkan: -
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
 | id | uuid | PK | Tidak | |
-| role_id | uuid | FK ke role.id | Tidak | |
+| role_id | uuid | FK ke roles.id | Tidak | |
 | name | varchar(255) | | Tidak | Nama lengkap |
 | email | varchar(255) | Unique | Tidak | |
 | email_verified_at | timestamp | | Ya | Terisi saat Customer memverifikasi email; untuk Admin diisi melalui seeder |
@@ -48,7 +48,7 @@ Dipensiunkan: -
 | created_at | timestamp | | Tidak | |
 | updated_at | timestamp | | Tidak | |
 
-### whatsapp_verification
+### whatsapp_verifications
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
@@ -86,7 +86,7 @@ Dipensiunkan: -
 | updated_at | timestamp | | Tidak | |
 | deleted_at | timestamp | | Ya | Penghapusan lunak |
 
-### kost_photo
+### kost_photos
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
@@ -95,21 +95,21 @@ Dipensiunkan: -
 | photo_path | varchar(500) | | Tidak | Path atau key berkas, bukan URL |
 | is_primary | boolean | | Tidak | Default false; menandai foto utama |
 
-### facility
+### facilities
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
 | id | uuid | PK | Tidak | |
 | name | varchar(100) | Unique | Tidak | |
 
-### kost_facility
+### kost_facilities
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
 | kost_id | uuid | PK komposit, FK ke kosts.id | Tidak | |
-| facility_id | uuid | PK komposit, FK ke facility.id | Tidak | |
+| facility_id | uuid | PK komposit, FK ke facilities.id | Tidak | |
 
-### room
+### rooms
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
@@ -122,7 +122,7 @@ Dipensiunkan: -
 | updated_at | timestamp | | Tidak | |
 | deleted_at | timestamp | | Ya | Penghapusan lunak |
 
-### complaint
+### complaints
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
@@ -139,16 +139,16 @@ Dipensiunkan: -
 | created_at | timestamp | | Tidak | |
 | updated_at | timestamp | | Tidak | |
 
-### complaint_attachment
+### complaint_attachments
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
 | id | uuid | PK | Tidak | |
-| complaint_id | uuid | FK ke complaint.id | Tidak | |
+| complaint_id | uuid | FK ke complaints.id | Tidak | |
 | file_path | varchar(500) | | Tidak | Path berkas privat; maksimal 3 berkas per aduan |
 | original_name | varchar(255) | | Ya | Nama berkas asli |
 
-### notification
+### notifications
 
 | Kolom | Tipe Data | Key | Null | Keterangan |
 |---|---|---|---|---|
@@ -165,32 +165,32 @@ Dipensiunkan: -
 
 | No | Tabel Induk (sisi 1) | Tabel Anak (sisi N) | Kolom FK | Kardinalitas | On Delete | Keterangan |
 |---|---|---|---|---|---|---|
-| 1 | role | users | users.role_id | 1 : N | Restrict | Satu peran dimiliki banyak pengguna |
-| 2 | users | whatsapp_verification | whatsapp_verification.user_id | 1 : N | Cascade | Satu Pemilik Kost dapat memiliki beberapa kode verifikasi |
+| 1 | roles | users | users.role_id | 1 : N | Restrict | Satu peran dimiliki banyak pengguna |
+| 2 | users | whatsapp_verifications | whatsapp_verifications.user_id | 1 : N | Cascade | Satu Pemilik Kost dapat memiliki beberapa kode verifikasi |
 | 3 | users (Pemilik Kost) | kosts | kosts.owner_id | 1 : N | Restrict | Satu Pemilik Kost memiliki banyak kost |
 | 4 | users (Admin) | kosts | kosts.reviewed_by | 1 : N | Set null | Satu Admin memproses banyak kost |
-| 5 | kosts | kost_photo | kost_photo.kost_id | 1 : N | Cascade | Satu kost memiliki banyak foto |
-| 6 | kosts | kost_facility | kost_facility.kost_id | 1 : N | Cascade | Bagian dari relasi banyak ke banyak |
-| 7 | facility | kost_facility | kost_facility.facility_id | 1 : N | Cascade | Bagian dari relasi banyak ke banyak |
-| 8 | kosts dan facility | (melalui kost_facility) | kost_id, facility_id | N : M | Cascade | Satu kost memiliki banyak fasilitas, satu fasilitas dimiliki banyak kost |
-| 9 | kosts | room | room.kost_id | 1 : N | Cascade | Satu kost memiliki banyak kamar |
-| 10 | users (Customer, Pemilik Kost) | complaint | complaint.user_id | 1 : N | Restrict | Satu pengguna dapat mengajukan banyak aduan |
-| 11 | kosts | complaint | complaint.kost_id | 1 : N (opsional) | Set null | Aduan dapat merujuk satu kost |
-| 12 | users (Admin) | complaint | complaint.handled_by | 1 : N | Set null | Satu Admin menangani banyak aduan |
-| 13 | complaint | complaint_attachment | complaint_attachment.complaint_id | 1 : N | Cascade | Satu aduan memiliki hingga 3 lampiran |
-| 14 | users | notification | notification.user_id | 1 : N | Cascade | Satu pengguna menerima banyak notifikasi |
+| 5 | kosts | kost_photos | kost_photos.kost_id | 1 : N | Cascade | Satu kost memiliki banyak foto |
+| 6 | kosts | kost_facilities | kost_facilities.kost_id | 1 : N | Cascade | Bagian dari relasi banyak ke banyak |
+| 7 | facilities | kost_facilities | kost_facilities.facility_id | 1 : N | Cascade | Bagian dari relasi banyak ke banyak |
+| 8 | kosts dan facilities | (melalui kost_facilities) | kost_id, facility_id | N : M | Cascade | Satu kost memiliki banyak fasilitas, satu fasilitas dimiliki banyak kost |
+| 9 | kosts | rooms | rooms.kost_id | 1 : N | Cascade | Satu kost memiliki banyak kamar |
+| 10 | users (Customer, Pemilik Kost) | complaints | complaints.user_id | 1 : N | Restrict | Satu pengguna dapat mengajukan banyak aduan |
+| 11 | kosts | complaints | complaints.kost_id | 1 : N (opsional) | Set null | Aduan dapat merujuk satu kost |
+| 12 | users (Admin) | complaints | complaints.handled_by | 1 : N | Set null | Satu Admin menangani banyak aduan |
+| 13 | complaints | complaint_attachments | complaint_attachments.complaint_id | 1 : N | Cascade | Satu aduan memiliki hingga 3 lampiran |
+| 14 | users | notifications | notifications.user_id | 1 : N | Cascade | Satu pengguna menerima banyak notifikasi |
 
 ## Nilai Enumerasi
 
 | Tabel.Kolom | Nilai |
 |---|---|
-| role.name | customer, pemilik_kost, admin |
+| roles.name | customer, pemilik_kost, admin |
 | kosts.type | putra, putri, campur |
 | kosts.status | menunggu_verifikasi, disetujui, ditolak, nonaktif, ditangguhkan |
-| room.status | tersedia, terisi, nonaktif |
-| complaint.category | laporan_kost, laporan_pengguna, kendala_sistem, lainnya |
-| complaint.status | baru, diproses, selesai |
-| notification.type | hasil_verifikasi_kost, kost_ditangguhkan, aduan_diperbarui |
+| rooms.status | tersedia, terisi, nonaktif |
+| complaints.category | laporan_kost, laporan_pengguna, kendala_sistem, lainnya |
+| complaints.status | baru, diproses, selesai |
+| notifications.type | hasil_verifikasi_kost, kost_ditangguhkan, aduan_diperbarui |
 
 ## Constraint, Indeks, dan Catatan
 
@@ -200,29 +200,29 @@ Dipensiunkan: -
 | users | Unique pada email dan whatsapp_number (nilai kosong diizinkan) | Mencegah akun dan nomor ganda |
 | users | Customer dan Admin terverifikasi apabila email_verified_at terisi; Pemilik Kost terverifikasi apabila whatsapp_verified_at terisi | FR-AUT-05, FR-AUT-06, FR-AUT-09 |
 | users.role_id | Wajib terisi; tiga peran (customer, pemilik_kost, admin) dibuat oleh RoleSeeder sebelum akun apa pun dibuat | Registrasi dan seeder tidak dapat berjalan tanpa peran |
-| whatsapp_verification | Indeks (user_id, consumed_at) | Pencarian kode aktif |
+| whatsapp_verifications | Indeks (user_id, consumed_at) | Pencarian kode aktif |
 | kosts | Indeks (latitude, longitude) dan indeks status | Pencarian radius 10 km dan penyaringan kost tampil |
 | kosts | Check latitude antara -90 dan 90, longitude antara -180 dan 180 | Validitas koordinat |
 | kosts | Hanya kost berstatus disetujui milik pengguna dengan is_active true yang tampil kepada publik | FR-SRC-09 |
-| kost_facility | Primary key komposit (kost_id, facility_id) | Mencegah fasilitas ganda pada satu kost |
-| room | Unique (kost_id, room_number); check price_per_month lebih dari 0; indeks (kost_id, status) | Nomor kamar tidak ganda dan harga valid |
-| complaint | Indeks (status, category) | Penyaringan oleh Admin |
-| notification | Indeks (user_id, read_at) | Daftar notifikasi belum dibaca |
+| kost_facilities | Primary key komposit (kost_id, facility_id) | Mencegah fasilitas ganda pada satu kost |
+| rooms | Unique (kost_id, room_number); check price_per_month lebih dari 0; indeks (kost_id, status) | Nomor kamar tidak ganda dan harga valid |
+| complaints | Indeks (status, category) | Penyaringan oleh Admin |
+| notifications | Indeks (user_id, read_at) | Daftar notifikasi belum dibaca |
 | Kolom berkas | photo_path, verification_document_path, dan file_path menyimpan path atau key objek, bukan URL; berkas verifikasi dan lampiran aduan bersifat privat | Tidak bergantung pada penyedia penyimpanan |
 | Konfigurasi | Template pesan WhatsApp, radius pencarian 10 km, batas lampiran aduan, dan parameter OTP disimpan pada konfigurasi aplikasi, bukan tabel | Tidak memerlukan tabel pengaturan |
-| kosts, room | Penghapusan lunak melalui deleted_at | Menjaga integritas data terkait |
+| kosts, rooms | Penghapusan lunak melalui deleted_at | Menjaga integritas data terkait |
 | Di luar cakupan | Tabel milik framework (sessions, cache, cache_locks, jobs, job_batches, failed_jobs, password_reset_tokens) tidak termasuk ERD ini sehingga tidak terikat aturan uuid dan created_at | Aturan identitas hanya berlaku pada tabel domain |
 
 ## Ketertelusuran FR ke Tabel
 
 | Modul FR | Tabel yang digunakan |
 |---|---|
-| FR-AUT | role, users, whatsapp_verification |
-| FR-PRF | users, whatsapp_verification |
-| FR-DSH | kosts, room, complaint (agregasi) |
-| FR-KOS | kosts, kost_photo, facility, kost_facility, room |
-| FR-SRC | kosts, room, kost_photo, facility, kost_facility |
-| FR-KTK | kosts, room, users (nomor WhatsApp Pemilik Kost dan nama Customer); tidak memerlukan tabel khusus |
-| FR-ADU | complaint, complaint_attachment, kosts |
-| FR-ADM | kosts, users, complaint (agregasi) |
-| FR-NTF | notification |
+| FR-AUT | roles, users, whatsapp_verifications |
+| FR-PRF | users, whatsapp_verifications |
+| FR-DSH | kosts, rooms, complaints (agregasi) |
+| FR-KOS | kosts, kost_photos, facilities, kost_facilities, rooms |
+| FR-SRC | kosts, rooms, kost_photos, facilities, kost_facilities |
+| FR-KTK | kosts, rooms, users (nomor WhatsApp Pemilik Kost dan nama Customer); tidak memerlukan tabel khusus |
+| FR-ADU | complaints, complaint_attachments, kosts |
+| FR-ADM | kosts, users, complaints (agregasi) |
+| FR-NTF | notifications |

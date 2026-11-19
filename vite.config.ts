@@ -38,10 +38,10 @@ export default defineConfig({
                 '**/vendor/**',
             ],
         },
-        host: '127.0.0.1',
-            hmr: {
-                host: '127.0.0.1',
-            },
+        // host: '127.0.0.1',
+        //     hmr: {
+        //         host: '127.0.0.1',
+        //     },
     },
     lint: {
         ignorePatterns: [
