@@ -1,17 +1,17 @@
 # AYGKOS
 
-Marketplace kost berbasis Laravel 13, Inertia v3, React 19, dan Tailwind v4.
+Marketplace kost berbasis Laravel 13, Inertia v3, React 19, dan Tailwind v4
+dengan PostgreSQL.
 
-## Penyiapan lingkungan pengembangan
+## Prasyarat
 
-### Prasyarat
+- PHP 8.4.1 atau lebih baru dengan ekstensi `pdo_pgsql`, `mbstring`, `xml`, dan
+  `curl`
+- Composer 2
+- Node.js 22 dan npm (lockfile yang dipakai adalah `package-lock.json`)
+- PostgreSQL 16
 
-- PHP 8.4+ dengan ekstensi `pdo_pgsql`, `mbstring`, `xml`, dan `curl`
-- Composer
-- Node.js dan npm (lockfile yang dipakai adalah `package-lock.json`)
-- Docker dengan plugin Compose. Podman juga dapat dipakai (lihat catatan di bawah)
-
-### Langkah
+## Penyiapan
 
 1. Pasang dependensi:
 
@@ -27,88 +27,46 @@ Marketplace kost berbasis Laravel 13, Inertia v3, React 19, dan Tailwind v4.
    php artisan key:generate
    ```
 
-3. Isi kredensial penyedia di `.env` (lihat bagian **Kredensial**):
-   `GEOAPIFY_API_KEY`, `OTP_DRIVER`, `FONNTE_TOKEN`, dan `MAIL_*`.
-
-4. Siapkan layanan data. Pilih salah satu — jangan menjalankan keduanya
-   bersamaan tanpa penyesuaian port:
-
-   **lerd (digunakan saat ini):** gunakan PostgreSQL bawaan lerd. Dari dalam
-   container PHP-FPM, host layanan bukan `127.0.0.1` melainkan
-   `lerd-postgres`. Nilai ini sudah disimpan di `.env.lerd_override`
-   (gitignored) agar tidak ditimpa saat `lerd env` dijalankan ulang:
+3. Siapkan PostgreSQL. Buat role dan database sesuai nilai `DB_USERNAME` dan
+   `DB_DATABASE` pada `.env`, lalu isi `DB_PASSWORD`:
 
    ```bash
-   lerd env
-   lerd db list
+   sudo -u postgres psql -c "CREATE ROLE aygkos LOGIN PASSWORD 'ganti-sandi-ini';"
+   sudo -u postgres psql -c "CREATE DATABASE aygkos OWNER aygkos;"
    ```
 
-   **Docker Compose:**
+   Sesuaikan `DB_HOST`, `DB_PORT`, `DB_USERNAME`, dan `DB_PASSWORD` di `.env`
+   bila memakai role atau port lain.
+
+4. Isi kredensial penyedia bila diperlukan (lihat bagian **Kredensial**).
+   Untuk pengembangan lokal, `OTP_DRIVER=log` dan `MAIL_MAILER=log` sudah cukup.
+
+5. Jalankan migrasi dan seeder:
 
    ```bash
-   docker compose up -d
+   php artisan migrate --seed
    ```
 
-   Penangkap email lokal bersifat opsional pada profil terpisah:
+   Seeder membuat peran `customer`, `pemilik_kost`, dan `admin`, serta satu
+   akun uji `test@example.com` dengan kata sandi `password`.
+
+6. Tautkan penyimpanan publik untuk foto kost:
 
    ```bash
-   docker compose --profile mail up -d
-   ```
-
-   Antarmuka Mailpit dapat dibuka di `http://localhost:8025`.
-
-5. Siapkan basis data dan tautan penyimpanan publik:
-
-   ```bash
-   php artisan config:clear
-   php artisan migrate:fresh
    php artisan storage:link
    ```
 
-6. Jalankan aplikasi dan aset front-end di dua terminal terpisah:
+7. Jalankan aplikasi:
 
    ```bash
-   php artisan serve
-   npm run dev
+   composer dev
    ```
 
-   Aplikasi dapat dibuka di `http://localhost:8000`. Foto kost yang tersimpan
-   pada disk `public` dapat diakses tanpa autentikasi melalui `/storage/...`.
+   Perintah ini menjalankan server, antrean, log, dan Vite sekaligus. Aplikasi
+   dapat dibuka di `http://localhost:8000`.
 
-### Catatan port dan konflik layanan
-
-`compose.yaml` memetakan port standar `5432:5432`, `1025:1025`, dan
-`8025:8025`. Port tersebut bentrok bila `lerd-postgres` / `lerd-mailpit`
-juga aktif — jalankan hanya satu layanan PostgreSQL pada satu waktu. Bila
-keduanya harus hidup bersama, ubah `ports` di `compose.yaml` **dan** `DB_PORT`
-di `.env` secara bersamaan (misalnya host 5433 → container 5432).
-
-### Catatan Podman / Lerd
-
-`podman compose` memerlukan socket Podman aktif dan provider Compose terpasang:
-
-```bash
-systemctl --user enable --now podman.socket
-loginctl enable-linger "$USER"
-podman compose up -d
-```
-
-Untuk lerd, konfigurasi yang terbukti bekerja dari container FPM adalah:
-
-```dotenv
-APP_URL=http://aygkos.test
-DB_CONNECTION=pgsql
-DB_HOST=lerd-postgres
-DB_PORT=5432
-DB_DATABASE=aygkos
-DB_USERNAME=postgres
-DB_PASSWORD=lerd
-```
-
-`DB_HOST=127.0.0.1` hanya benar bila PHP dijalankan langsung di host. Di dalam
-kontainer FPM, `127.0.0.1` adalah loopback kontainer itu sendiri, sehingga
-koneksi ke PostgreSQL ditolak. `host.containers.internal` juga tidak membantu
-untuk layanan lerd karena PostgreSQL-nya hanya terikat di `127.0.0.1` host.
+   Bila ingin menjalankan terpisah, gunakan `php artisan serve` dan
+   `npm run dev` pada dua terminal.
 
 ## Kredensial
 
@@ -136,16 +94,36 @@ Catatan pengirim pesan:
 - Untuk mengirim email nyata cukup ubah variabel `MAIL_*`; tidak ada perubahan
   kode yang diperlukan.
 
+## Basis data pengujian
+
+Tes memakai database terpisah `aygkos_testing` (lihat `phpunit.xml`). Buat
+sekali saja:
+
+```bash
+sudo -u postgres psql -c "CREATE DATABASE aygkos_testing OWNER aygkos;"
+```
+
 ## Pemeriksaan
 
 ```bash
-composer test
-npm run types:check
+composer test       # Pint, PHPStan, dan seluruh tes
+composer ci:check   # npm run check + TypeScript + composer test
 npm run build
 ```
 
-`composer test` menjalankan Pint, PHPStan, dan seluruh tes otomatis.
-Batas unggahan (foto kost 3 MB, dokumen verifikasi dan lampiran aduan 5 MB,
-maksimal 3 lampiran) serta parameter OTP berada di `config/uploads.php` dan
-`config/otp.php`. Pastikan `upload_max_filesize` dan `post_max_size` PHP lebih
-besar dari batas terbesar bila menjalankan `php artisan serve`.
+`composer test` membutuhkan PostgreSQL aktif dan database `aygkos_testing`
+sudah dibuat. Batas unggahan (foto kost 3 MB, dokumen verifikasi dan lampiran
+aduan 5 MB, maksimal 3 lampiran) serta parameter OTP berada di
+`config/uploads.php` dan `config/otp.php`. Pastikan `upload_max_filesize` dan
+`post_max_size` PHP lebih besar dari batas terbesar.
+
+## Catatan pengembangan
+
+- Foto kost pada disk `public` dapat diakses tanpa autentikasi melalui
+  `/storage/...`. Dokumen verifikasi dan lampiran aduan bersifat privat dan
+  diakses lewat tautan sementara dari `app/Support/PrivateFileUrl.php`.
+- `resources/js/{actions,routes,wayfinder}/` adalah hasil generate Wayfinder
+  dan tidak dilacak Git. Berkas tersebut dibuat otomatis oleh plugin Vite saat
+  `npm run dev` atau `npm run build`.
+- Panduan kontribusi dan konvensi kode ada di `AGENTS.md`. Spesifikasi fitur ada
+  di `docs/` dan `openspec/`.
