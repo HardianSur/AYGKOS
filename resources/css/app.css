@@ -59,6 +59,24 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    --font-brand:
+        'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --color-night: var(--brand-night);
+    --color-night-ink: var(--brand-night-ink);
+    --color-night-soft: var(--brand-night-soft);
+    --color-canvas: var(--brand-canvas);
+    --color-surface: var(--brand-surface);
+    --color-ink: var(--brand-ink);
+    --color-ink-soft: var(--brand-ink-soft);
+    --color-hairline: var(--brand-hairline);
+    --color-field: var(--brand-field);
+    --color-ember: var(--brand-ember);
+    --color-ember-ink: var(--brand-ember-ink);
+    --color-ember-wash: var(--brand-ember-wash);
 }
 
 :root {
@@ -130,6 +148,34 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* Brand palette from docs/DESIGN.md — additive, does not replace the shadcn theme above. */
+:root {
+    --brand-night: #12152a;
+    --brand-night-ink: #f3f4fa;
+    --brand-night-soft: #a4abc8;
+    --brand-canvas: #f7f8fc;
+    --brand-surface: #ffffff;
+    --brand-ink: #1b2038;
+    --brand-ink-soft: #5e6580;
+    --brand-hairline: #d8dce8;
+    --brand-field: #7d879f;
+    --brand-ember: #ff7a1a;
+    --brand-ember-ink: #b54708;
+    --brand-ember-wash: #fff1e6;
+}
+
+.dark {
+    --brand-canvas: #12152a;
+    --brand-surface: #202748;
+    --brand-ink: #f3f4fa;
+    --brand-ink-soft: #a4abc8;
+    --brand-hairline: #414a7c;
+    --brand-field: #7a83a8;
+    --brand-ember: #ff8a2b;
+    --brand-ember-ink: #ff8a2b;
+    --brand-ember-wash: #3b2a20;
 }
 
 @layer base {
