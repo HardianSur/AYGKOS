@@ -75,6 +75,16 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Determine whether the account passed the verification its role requires.
+     *
+     * Middleware `verified` and the login guard delegate to the per-role rule.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->hasVerifiedIdentity();
+    }
+
+    /**
      * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo

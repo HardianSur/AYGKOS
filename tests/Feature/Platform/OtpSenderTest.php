@@ -40,10 +40,11 @@ it('mengirim kode OTP ke endpoint Fonnte dengan token dari konfigurasi', functio
         'api.fonnte.com/*' => Http::response(['status' => true], 200),
     ]);
 
-    app(OtpSender::class)->send('081234567890', '123456');
+    app(OtpSender::class)->send('6281234567890', '123456');
 
     Http::assertSent(fn (Request $request): bool => $request->url() === 'https://api.fonnte.com/send'
         && $request->hasHeader('Authorization', 'token-uji')
+        && $request['target'] === '6281234567890'
         && str_contains((string) $request['message'], '123456'));
 });
 

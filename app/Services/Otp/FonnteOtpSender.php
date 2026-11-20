@@ -35,12 +35,19 @@ final class FonnteOtpSender implements OtpSender
                 'countryCode' => '62',
             ]);
 
-            if ($response->failed()) {
+            if ($response->failed() || ! $response->json('status')) {
                 Log::warning('Fonnte menolak pengiriman OTP.', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+
+                return;
             }
+
+            Log::info('Fonnte menerima OTP untuk dikirim.', [
+                'target' => $number,
+                'requestid' => $response->json('requestid'),
+            ]);
         } catch (ConnectionException $exception) {
             Log::warning('Gagal terhubung ke Fonnte.', [
                 'message' => $exception->getMessage(),

@@ -28,6 +28,20 @@ class WhatsappVerification extends Model
     public const UPDATED_AT = null;
 
     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'expires_at' => 'datetime',
+            'last_sent_at' => 'datetime',
+            'consumed_at' => 'datetime',
+        ];
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
