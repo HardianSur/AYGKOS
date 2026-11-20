@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
@@ -106,4 +107,27 @@ test('already verified user visiting verification link is redirected without fir
 
     Event::assertNotDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+});
+
+test('kost owners verified by whatsapp pass the verified middleware without an email', function () {
+    $owner = User::factory()->unverified()->create([
+        'role_id' => Role::firstOrCreate(['name' => 'pemilik_kost'])->id,
+        'whatsapp_number' => '6281234567890',
+        'whatsapp_verified_at' => now(),
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('appearance.edit'))
+        ->assertOk();
+});
+
+test('kost owners without whatsapp verification stay on the whatsapp prompt', function () {
+    $owner = User::factory()->unverified()->create([
+        'role_id' => Role::firstOrCreate(['name' => 'pemilik_kost'])->id,
+        'whatsapp_number' => '6281234567890',
+    ]);
+
+    $this->actingAs($owner)
+        ->get(route('verification.notice'))
+        ->assertRedirect(route('verification.whatsapp.notice', absolute: false));
 });
