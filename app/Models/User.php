@@ -54,6 +54,27 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Determine whether the account belongs to a kost owner.
+     */
+    public function isPemilikKost(): bool
+    {
+        return $this->role?->name === 'pemilik_kost';
+    }
+
+    /**
+     * Determine whether the account proved the identity its role requires.
+     *
+     * Pemilik Kost prove their WhatsApp number; Customer and Admin prove their
+     * email address.
+     */
+    public function hasVerifiedIdentity(): bool
+    {
+        return $this->isPemilikKost()
+            ? $this->whatsapp_verified_at !== null
+            : $this->email_verified_at !== null;
+    }
+
+    /**
      * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo

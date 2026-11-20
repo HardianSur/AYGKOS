@@ -46,6 +46,10 @@ test('email is stored in lowercase so the user can still log in', function () {
 
     expect($user->refresh()->email)->toBe('test@example.com');
 
+    // Mengubah email mengosongkan email_verified_at; tandai terverifikasi lagi
+    // supaya tes ini tetap menguji huruf besar-kecil, bukan gerbang verifikasi.
+    $user->forceFill(['email_verified_at' => now()])->save();
+
     $this->post(route('logout'));
 
     $this->post(route('login.store'), [
