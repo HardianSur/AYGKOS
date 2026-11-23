@@ -144,7 +144,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                 className={linkClass}
                                 tabIndex={6}
                             >
-                                Daftar sebagai pencari kost
+                                Daftar Sekarang!
                             </TextLink>
                         </p>
                     </>
