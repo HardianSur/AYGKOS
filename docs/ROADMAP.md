@@ -67,7 +67,7 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 ---
 
-## 4. M1 — Skema Domain, Model, Relasi
+## 4. M1.1 — Skema Domain, Model, Relasi
 
 **Deliverable**
 
@@ -96,7 +96,7 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 ---
 
-## 5. M2 — Autentikasi dan Otorisasi
+## 5. M1.2 — Autentikasi dan Otorisasi
 
 **FR:** FR-AUT-01 s.d. FR-AUT-13.
 
@@ -124,11 +124,11 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 **Prasyarat:** M1 (kolom `role_id`, `whatsapp_number`, `whatsapp_verified_at`, `is_active`, tabel `whatsapp_verifications`).
 
-**Berikutnya:** M3 — profil dan keamanan akun.
+**Berikutnya:** M2.1 — profil dan keamanan akun.
 
 ---
 
-## 6. M3 — Profil dan Keamanan Akun
+## 6. M2.1 — Profil dan Keamanan Akun
 
 **FR:** FR-PRF-01, FR-PRF-02, FR-PRF-03.
 
@@ -146,13 +146,13 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Nomor WhatsApp baru tidak berlaku sebelum OTP benar; nomor lama tetap dipakai sampai verifikasi selesai.
 - [ ] Nomor WhatsApp yang sudah dipakai akun lain ditolak.
 
-**Prasyarat:** M2.
+**Prasyarat:** M1.
 
-**Berikutnya:** M4 — pengelolaan kost oleh Pemilik Kost.
+**Berikutnya:** M2.2 — pengelolaan kost oleh Pemilik Kost.
 
 ---
 
-## 7. M4 — Pemilik Kost: Kost dan Kamar
+## 7. M2.2 — Pemilik Kost: Kost dan Kamar
 
 **FR:** FR-KOS-01 s.d. FR-KOS-10, FR-DSH-01.
 
@@ -179,11 +179,11 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 **Prasyarat:** M1 (tabel `kosts`, `rooms`, `kost_photos`, `facilities`, `kost_facilities`), M2 (peran dan verifikasi).
 
-**Berikutnya:** M5 — verifikasi oleh Admin.
+**Berikutnya:** M3.1 — verifikasi oleh Admin.
 
 ---
 
-## 8. M5 — Admin: Verifikasi dan Penangguhan Kost
+## 8. M3.1 — Admin: Verifikasi dan Penangguhan Kost
 
 **FR:** FR-ADM-VER-01 s.d. FR-ADM-VER-03, FR-ADM-KOS-01, FR-DSH-02.
 
@@ -204,13 +204,13 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Dokumen verifikasi hanya dapat dibuka Admin melalui tautan bertanda tangan; tautan kedaluwarsa setelah 10 menit.
 - [ ] Peran selain Admin mendapat 403 pada seluruh route verifikasi.
 
-**Prasyarat:** M4 (kost harus ada untuk diverifikasi).
+**Prasyarat:** M2 (kost harus ada untuk diverifikasi).
 
-**Berikutnya:** M6 — pencarian publik dan kontak WhatsApp.
+**Berikutnya:** M3.2 — pencarian publik dan kontak WhatsApp.
 
 ---
 
-## 9. M6 — Publik: Pencarian, Detail, Kontak
+## 9. M3.2 — Publik: Pencarian, Detail, Kontak
 
 **FR:** FR-SRC-01 s.d. FR-SRC-09, FR-KTK-01 s.d. FR-KTK-06.
 
@@ -240,13 +240,13 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Guest yang memilih Hubungi Pemilik kembali ke detail kost setelah login.
 - [ ] Halaman tanpa `window` aman dirender di SSR (Leaflet dimuat dinamis).
 
-**Prasyarat:** M4 dan M5 (data kost yang layak tampil).
+**Prasyarat:** M3 (data kost yang layak tampil).
 
-**Berikutnya:** M7 — aduan.
+**Berikutnya:** M4.1 — aduan.
 
 ---
 
-## 10. M7 — Aduan
+## 10. M4.1 — Aduan
 
 **FR:** FR-ADU-01 s.d. FR-ADU-05.
 
@@ -267,13 +267,13 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Admin mengubah status dan menulis tanggapan; perubahan langsung terlihat pada halaman pengguna.
 - [ ] Penghapusan aduan tidak tersedia; aduan diakhiri dengan status Selesai.
 
-**Prasyarat:** M6 (rujukan kost) dan M2 (identitas pelaku).
+**Prasyarat:** M2 (rujukan kost) dan M1 (identitas pelaku).
 
-**Berikutnya:** M8 — notifikasi in-app.
+**Berikutnya:** M4.2 — notifikasi in-app.
 
 ---
 
-## 11. M8 — Notifikasi In-App
+## 11. M4.2 — Notifikasi In-App
 
 **FR:** FR-NTF-01, FR-NTF-02.
 
@@ -288,13 +288,13 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Penanda belum dibaca hilang setelah notifikasi dibuka; menandai notifikasi pengguna lain ditolak.
 - [ ] Notifikasi tetap ada setelah sesi berakhir (tersimpan di basis data, bukan state klien).
 
-**Prasyarat:** M5 (pemicu notifikasi) dan M7 (bila notifikasi aduan disertakan).
+**Prasyarat:** M4 (pemicu notifikasi) dan M4.1 (bila notifikasi aduan disertakan).
 
-**Berikutnya:** M9 — pengelolaan pengguna dan laporan.
+**Berikutnya:** M4.3 — pengelolaan pengguna dan laporan.
 
 ---
 
-## 12. M9 — Admin: Pengguna dan Laporan
+## 12. M4.3 — Admin: Pengguna dan Laporan
 
 **FR:** FR-ADM-USR-01, FR-ADM-REP-01, FR-ADM-REP-02.
 
@@ -312,13 +312,13 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Statistik cocok dengan hitungan langsung pada basis data untuk periode yang sama.
 - [ ] Filter periode mengubah angka sesuai rentang yang dipilih.
 
-**Prasyarat:** M5, M7.
+**Prasyarat:** M4, M4.1.
 
-**Berikutnya:** M10 — pengerasan.
+**Berikutnya:** M5 — pengerasan.
 
 ---
 
-## 13. M10 — Pengerasan
+## 13. M5 — Pengerasan
 
 **Deliverable**
 
@@ -343,16 +343,16 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 ```text
 M0 Foundation (Sebagian)
-  -> M1 Skema Domain
-      -> M2 Auth dan Otorisasi
-          -> M3 Profil dan Keamanan
-          -> M4 Kost dan Kamar
-              -> M5 Verifikasi Admin
-                  -> M6 Pencarian, Detail, Kontak
-                      -> M7 Aduan
-                          -> M8 Notifikasi
-                              -> M9 Pengguna dan Laporan
-                                  -> M10 Pengerasan
+  -> M1.1 Skema Domain
+      -> M1.2 Auth dan Otorisasi
+          -> M2.1 Profil dan Keamanan
+          -> M2.2 Kost dan Kamar
+              -> M3.1 Verifikasi Admin
+                  -> M3.2 Pencarian, Detail, Kontak
+                      -> M4.1 Aduan
+                          -> M4.2 Notifikasi
+                              -> M4.3 Pengguna dan Laporan
+                                  -> M5 Pengerasan
 ```
 
 M3 dan M4 dapat berjalan paralel setelah M1 dan M2 selesai. M8 dapat dikerjakan bersamaan dengan M6 selama pemicu notifikasi pada M5 sudah ada.
