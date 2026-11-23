@@ -17,21 +17,21 @@
 
 ---
 
-## 2. Ringkasan Fase
+## 2. Ringkasan Timeline
 
 | Fase | Fokus | FR | Status |
 |---|---|---|---|
 | M0 | Foundation: scaffold, dependensi, primitif platform, dokumentasi | — | Sebagian |
-| M1 | Skema domain, model, relasi | — | Belum |
-| M2 | Autentikasi, verifikasi dua jalur, otorisasi per peran | FR-AUT-01 s.d. FR-AUT-13 | Sebagian |
-| M3 | Profil dan keamanan akun | FR-PRF-01, FR-PRF-02, FR-PRF-03 | Sebagian |
-| M4 | Pemilik Kost: pengelolaan kost dan kamar | FR-KOS-01 s.d. FR-KOS-10, FR-DSH-01 | Belum |
-| M5 | Admin: verifikasi dan penangguhan kost | FR-ADM-VER-01 s.d. FR-ADM-VER-03, FR-ADM-KOS-01, FR-DSH-02 | Belum |
-| M6 | Publik: pencarian, detail, kontak WhatsApp | FR-SRC-01 s.d. FR-SRC-09, FR-KTK-01 s.d. FR-KTK-06 | Belum |
-| M7 | Aduan | FR-ADU-01 s.d. FR-ADU-05 | Belum |
-| M8 | Notifikasi in-app | FR-NTF-01, FR-NTF-02 | Belum |
-| M9 | Admin: pengguna dan laporan | FR-ADM-USR-01, FR-ADM-REP-01, FR-ADM-REP-02 | Belum |
-| M10 | Pengerasan: audit otorisasi, cakupan tes, gate mutu | — | Belum |
+| M1.1 | Skema domain, model, relasi | — | Selesai |
+| M1.2 | Autentikasi, verifikasi dua langkah, otorisasi per peran | FR-AUT-01 s.d. FR-AUT-13 | Selesai |
+| M2.1 | Profil dan keamanan akun | FR-PRF-01, FR-PRF-02, FR-PRF-03 | Sebagian |
+| M2.2 | Pemilik Kost: pengelolaan kost dan kamar | FR-KOS-01 s.d. FR-KOS-10, FR-DSH-01 | Belum |
+| M3.1 | Admin: verifikasi dan penangguhan kost | FR-ADM-VER-01 s.d. FR-ADM-VER-03, FR-ADM-KOS-01, FR-DSH-02 | Belum |
+| M3.2 | Publik: pencarian, detail, kontak WhatsApp | FR-SRC-01 s.d. FR-SRC-09, FR-KTK-01 s.d. FR-KTK-06 | Belum |
+| M4.1 | Aduan | FR-ADU-01 s.d. FR-ADU-05 | Belum |
+| M4.2 | Notifikasi in-app | FR-NTF-01, FR-NTF-02 | Belum |
+| M4.3 | Admin: pengguna dan laporan | FR-ADM-USR-01, FR-ADM-REP-01, FR-ADM-REP-02 | Belum |
+| M5 | Pengerasan: audit otorisasi, cakupan tes, gate mutu | — | Belum |
 
 Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 kelompok).
 
