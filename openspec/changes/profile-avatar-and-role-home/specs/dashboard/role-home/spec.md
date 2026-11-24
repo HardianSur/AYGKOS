@@ -22,12 +22,17 @@ Halaman `/dashboard` SHALL tetap hanya dapat dibuka pengguna yang sudah masuk da
 
 ### Requirement: Customer melihat halaman sapaan sementara
 
-Selama halaman pencarian kost belum tersedia, `/dashboard` untuk Customer SHALL menampilkan sapaan berisi nama lengkap pengguna pada satu judul tingkat pertama, tanpa kerangka dashboard Pemilik Kost maupun Admin.
+Selama halaman pencarian kost belum tersedia, `/dashboard` untuk Customer SHALL menampilkan sapaan berisi nama lengkap pengguna pada satu judul tingkat pertama, tanpa kerangka dashboard Pemilik Kost maupun Admin. Halaman itu SHALL menyediakan satu kendali keluar akun, karena tanpa sidebar tidak ada menu pengguna untuk keluar.
 
 #### Scenario: Customer membuka dashboard
 
 - **WHEN** akun Customer yang terverifikasi membuka `/dashboard`
 - **THEN** halaman menampilkan judul tingkat pertama berisi sapaan dan nama lengkap pengguna
+
+#### Scenario: Customer keluar dari halaman sapaan
+
+- **WHEN** akun Customer menekan kendali keluar pada halaman sapaan
+- **THEN** sesinya berakhir dan pengguna dialihkan ke halaman masuk
 
 #### Scenario: Customer tidak melihat kerangka dashboard
 
