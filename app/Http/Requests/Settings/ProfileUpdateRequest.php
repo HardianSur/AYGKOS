@@ -28,6 +28,17 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->profileRules($this->user()->id);
+        /** @var array{max_kb: int, mimes: array<int, string>} $limits */
+        $limits = config('uploads.profile_photo');
+
+        return [
+            ...$this->profileRules($this->user()->id),
+            'avatar' => [
+                'nullable',
+                'image',
+                'mimes:'.implode(',', $limits['mimes']),
+                'max:'.$limits['max_kb'],
+            ],
+        ];
     }
 }

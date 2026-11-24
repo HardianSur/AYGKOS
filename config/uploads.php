@@ -22,6 +22,11 @@ return [
         'mimes' => ['jpg', 'jpeg', 'png', 'webp'],
     ],
 
+    'profile_photo' => [
+        'max_kb' => 3 * 1024,
+        'mimes' => ['jpg', 'jpeg', 'png', 'webp'],
+    ],
+
     'verification_document' => [
         'max_kb' => 5 * 1024,
         'mimes' => ['jpg', 'jpeg', 'png', 'pdf'],
