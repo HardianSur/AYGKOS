@@ -8,12 +8,17 @@ Menetapkan cara berkas unggahan disimpan dan disajikan, sehingga foto kost dapat
 
 ### Requirement: Pemisahan berkas publik dan privat
 
-Sistem SHALL menyimpan foto kost pada penyimpanan publik, dan SHALL menyimpan dokumen verifikasi kost serta lampiran aduan pada penyimpanan privat yang tidak dapat diakses langsung melalui URL publik.
+Sistem SHALL menyimpan foto kost dan foto profil pengguna pada penyimpanan publik, dan SHALL menyimpan dokumen verifikasi kost serta lampiran aduan pada penyimpanan privat yang tidak dapat diakses langsung melalui URL publik.
 
 #### Scenario: Foto kost diakses publik
 
 - **WHEN** pengguna membuka halaman detail kost yang telah disetujui
 - **THEN** foto kost tampil melalui URL publik yang dapat diakses tanpa autentikasi
+
+#### Scenario: Foto profil diakses publik
+
+- **WHEN** foto profil seorang pengguna ditampilkan pada header aplikasi
+- **THEN** foto dimuat melalui URL publik tanpa memerlukan autentikasi tambahan
 
 #### Scenario: Dokumen verifikasi diakses langsung
 
@@ -81,3 +86,13 @@ Sistem SHALL menghapus berkas terkait ketika entitas pemiliknya dihapus, sehingg
 
 - **WHEN** Pemilik Kost mengganti foto utama kost
 - **THEN** berkas foto lama terhapus dari penyimpanan setelah penyimpanan berkas baru berhasil
+
+#### Scenario: Akun dihapus
+
+- **WHEN** sebuah akun dihapus
+- **THEN** berkas foto profil akun tersebut turut terhapus dari penyimpanan
+
+#### Scenario: Penggantian foto profil
+
+- **WHEN** pengguna mengganti foto profilnya
+- **THEN** berkas foto lama terhapus dari penyimpanan setelah penyimpanan berkas baru berhasil, dan tetap tersimpan bila penyimpanan berkas baru gagal
