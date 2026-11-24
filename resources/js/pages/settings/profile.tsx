@@ -1,12 +1,14 @@
-import { Form, Head, usePage } from '@inertiajs/react';
-import { Link } from '@inertiajs/react';
+import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useInitials } from '@/hooks/use-initials';
 import { edit } from '@/routes/profile';
 import type { Auth } from '@/types';
 import { send } from '@/routes/verification';
@@ -23,6 +25,8 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage<PageProps>().props;
+    const getInitials = useInitials();
+    const [preview, setPreview] = useState<string | null>(null);
 
     return (
         <>
@@ -42,10 +46,52 @@ export default function Profile({
                     options={{
                         preserveScroll: true,
                     }}
+                    onSuccess={() => setPreview(null)}
                     className="space-y-6"
                 >
                     {({ processing, errors }) => (
                         <>
+                            <div className="flex items-center gap-4">
+                                <Avatar className="size-20 overflow-hidden rounded-full">
+                                    <AvatarImage
+                                        src={preview ?? auth.user.avatar}
+                                        alt={auth.user.name}
+                                        className="object-cover"
+                                    />
+                                    <AvatarFallback className="rounded-full bg-neutral-200 text-lg text-black dark:bg-neutral-700 dark:text-white">
+                                        {getInitials(auth.user.name)}
+                                    </AvatarFallback>
+                                </Avatar>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="avatar">Foto profil</Label>
+
+                                    <Input
+                                        id="avatar"
+                                        type="file"
+                                        name="avatar"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        className="h-auto py-2 file:font-medium focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                                        onChange={(event) => {
+                                            const file =
+                                                event.target.files?.[0];
+
+                                            setPreview(
+                                                file
+                                                    ? URL.createObjectURL(file)
+                                                    : null,
+                                            );
+                                        }}
+                                    />
+
+                                    <p className="text-sm text-muted-foreground">
+                                        JPG, PNG, atau WebP maksimal 3 MB
+                                    </p>
+
+                                    <InputError message={errors.avatar} />
+                                </div>
+                            </div>
+
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Name</Label>
 
@@ -84,6 +130,21 @@ export default function Profile({
                                     message={errors.email}
                                 />
                             </div>
+
+                            {auth.user.whatsapp_number !== null && (
+                                <div className="grid gap-1">
+                                    <span className="text-sm font-medium text-ink">
+                                        Nomor WhatsApp
+                                    </span>
+                                    <span className="text-sm text-ink-soft">
+                                        {auth.user.whatsapp_number}
+                                        {' — '}
+                                        {auth.user.whatsapp_verified_at !== null
+                                            ? 'Terverifikasi'
+                                            : 'Belum terverifikasi'}
+                                    </span>
+                                </div>
+                            )}
 
                             {mustVerifyEmail &&
                                 auth.user.email_verified_at === null && (

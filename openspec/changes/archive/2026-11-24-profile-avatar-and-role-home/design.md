@@ -98,7 +98,7 @@ Route::get('dashboard', function (Request $request) {
 })->name('dashboard');
 ```
 
-Middleware `auth` + `verified` tetap sama, jadi tujuan pengarahan setelah masuk tidak berubah dan spec `auth/login` tidak perlu diubah. Halaman `resources/js/pages/home.tsx` hanya berisi `<h1>hi {auth.user.name}</h1>` dan layout bawaan `AppLayout` (resolusi di `app.tsx` tidak perlu kasus baru karena default sudah `AppLayout`).
+Middleware `auth` + `verified` tetap sama, jadi tujuan pengarahan setelah masuk tidak berubah dan spec `auth/login` tidak perlu diubah. Halaman `resources/js/pages/home.tsx` berisi satu `<h1>Hai, {auth.user.name}</h1>` terpusat dan satu tombol `Keluar` (POST `/logout` Fortify) tanpa layout aplikasi: `app.tsx` meresolusi `home` ke `null` seperti `welcome`, sehingga Customer tidak melihat sidebar maupun header milik Pemilik Kost dan Admin — satu-satunya jalan keluar dari halaman itu adalah tombol tersebut. Halaman Customer akan mendapat UI sendiri pada change terpisah.
 
 Alternatif middleware pengarah per peran ditolak: mengubah tujuan pengarahan, memaksa middleware baru, dan bertabrakan dengan spec `auth/login` yang menyatakan semua peran diarahkan ke `/dashboard`. Alternatif dua route berbeda (`/beranda`, `/dashboard`) ditolak karena alasan yang sama.
 
