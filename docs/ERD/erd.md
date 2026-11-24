@@ -1,8 +1,8 @@
 # ERD AYGKOS
 
-## Versi V003
+## Versi V004
 
-Dibuat: 18-11-2026:16:10 WIB
+Dibuat: 23-11-2026:20:33 WIB
 Dipensiunkan: -
 
 ## Daftar Entitas
@@ -42,6 +42,7 @@ Dipensiunkan: -
 | email_verified_at | timestamp | | Ya | Terisi saat Customer memverifikasi email; untuk Admin diisi melalui seeder |
 | whatsapp_number | varchar(20) | Unique | Ya | Wajib untuk Pemilik Kost, kosong untuk peran lain; format +62 |
 | whatsapp_verified_at | timestamp | | Ya | Terisi saat Pemilik Kost memverifikasi OTP WhatsApp |
+| avatar_path | varchar(500) | | Ya | Path relatif foto profil pada disk `public`, bukan URL; kosong berarti belum ada foto |
 | password | varchar(255) | | Tidak | Hasil hash |
 | is_active | boolean | | Tidak | Default true; false apabila akun dinonaktifkan Admin |
 | remember_token | varchar(100) | | Ya | Diisi framework saat opsi "ingat saya" dipakai |
@@ -208,7 +209,7 @@ Dipensiunkan: -
 | rooms | Unique (kost_id, room_number); check price_per_month lebih dari 0; indeks (kost_id, status) | Nomor kamar tidak ganda dan harga valid |
 | complaints | Indeks (status, category) | Penyaringan oleh Admin |
 | notifications | Indeks (user_id, read_at) | Daftar notifikasi belum dibaca |
-| Kolom berkas | photo_path, verification_document_path, dan file_path menyimpan path atau key objek, bukan URL; berkas verifikasi dan lampiran aduan bersifat privat | Tidak bergantung pada penyedia penyimpanan |
+| Kolom berkas | photo_path, verification_document_path, file_path, dan avatar_path menyimpan path atau key objek, bukan URL; berkas verifikasi dan lampiran aduan bersifat privat, sedangkan foto kost dan foto profil publik | Tidak bergantung pada penyedia penyimpanan |
 | Konfigurasi | Template pesan WhatsApp, radius pencarian 10 km, batas lampiran aduan, dan parameter OTP disimpan pada konfigurasi aplikasi, bukan tabel | Tidak memerlukan tabel pengaturan |
 | kosts, rooms | Penghapusan lunak melalui deleted_at | Menjaga integritas data terkait |
 | Di luar cakupan | Tabel milik framework (sessions, cache, cache_locks, jobs, job_batches, failed_jobs, password_reset_tokens) tidak termasuk ERD ini sehingga tidak terikat aturan uuid dan created_at | Aturan identitas hanya berlaku pada tabel domain |

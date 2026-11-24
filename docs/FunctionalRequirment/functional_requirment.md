@@ -1,5 +1,10 @@
 # Functional Requirement AYGKOS
 
+## Versi V001
+
+Dibuat: 17-11-2026:17:45 WIB
+Dipensiunkan: -
+
 | Kode | Aktor | Fitur | Requirement | Prioritas |
 |---|---|---|---|---|
 | FR-AUT-01 | Guest | Registrasi | Sistem harus menyediakan formulir registrasi dengan pilihan peran Customer atau Pemilik Kost. Registrasi mandiri sebagai Admin tidak tersedia, dan akun Admin dibuat melalui seeder atau langsung di database. | Tinggi |
@@ -18,6 +23,7 @@
 | FR-PRF-01 | Customer, Pemilik Kost | Profil | Sistem harus memungkinkan pengguna melihat dan mengubah nama lengkap. | Sedang |
 | FR-PRF-02 | Customer, Pemilik Kost, Admin | Ubah Password | Sistem harus memungkinkan pengguna mengubah password dengan memasukkan password lama dan password baru. | Rendah |
 | FR-PRF-03 | Pemilik Kost | Nomor WhatsApp | Sistem harus memungkinkan Pemilik Kost mengubah nomor WhatsApp, dan nomor baru berlaku setelah diverifikasi melalui kode OTP. | Rendah |
+| FR-PRF-04 | Customer, Pemilik Kost, Admin | Foto Profil | Sistem harus memungkinkan pengguna mengunggah foto profil (JPG, PNG, atau WebP maksimal 3 MB), menyimpannya sebagai berkas 400×400 piksel, dan menampilkan foto itu pada halaman profil, header, dan menu pengguna. | Rendah |
 | FR-DSH-01 | Pemilik Kost | Dashboard Pemilik Kost | Sistem harus menampilkan pada dashboard Pemilik Kost jumlah kost per status verifikasi dan jumlah kamar per status. | Sedang |
 | FR-DSH-02 | Admin | Dashboard Admin | Sistem harus menampilkan pada dashboard Admin jumlah kost menunggu verifikasi dan jumlah aduan baru. | Sedang |
 | FR-KOS-01 | Pemilik Kost | Pengajuan Kost | Sistem harus memungkinkan Pemilik Kost menambahkan kost dengan data nama, alamat lengkap, kota, titik lokasi (latitude dan longitude), tipe kost (Putra, Putri, atau Campur), deskripsi, fasilitas, peraturan, minimal satu foto, dan dokumen verifikasi (KTP atau bukti kepemilikan). | Tinggi |
