@@ -73,11 +73,11 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 - `phpunit.xml` beralih ke `DB_CONNECTION=pgsql`, `DB_DATABASE=aygkos_testing`; suite lama tetap lulus pada PostgreSQL.
 - Peran dan identitas: tabel `roles`, `users` ber-UUID7 dengan `role_id`, `whatsapp_number`, `whatsapp_verified_at`, `is_active`; `sessions.user_id` menjadi UUID.
-- Sepuluh tabel domain sesuai ERD: `kosts`, `kost_photos`, `facilities`, `kost_facilities`, `rooms`, `complaints`, `complaint_attachments`, `notifications`, `whatsapp_verifications`.
-- Constraint: check rentang koordinat, check harga kamar positif, unique nomor kamar per kost, primary key komposit `kost_facilities`, indeks `(latitude, longitude)`, `(kost_id, status)`, `(user_id, read_at)`, `(status, category)`.
-- Model dengan `HasUuids`, `SoftDeletes` pada `Kost` dan `Room`, `$timestamps = false` pada `Facility` dan `KostPhoto`, `const UPDATED_AT = null` pada `Notification`; relasi dan blok `@property` lengkap untuk PHPStan level 7.
-- `RoleSeeder` (customer, pemilik_kost, admin), `FacilitySeeder`; `UserFactory` menetapkan peran `customer`.
-- Penghapusan berkas pada event model `Kost`, `KostPhoto`, `ComplaintAttachment` (tugas 2.4 tertunda dari M0).
+- Tabel domain sesuai ERD: `kosts`, `room_types`, `photos`, `kost_documents`, `facilities`, `kost_facilities`, `rules`, `kost_rules`, `specifications`, `room_type_specifications`, `room_type_facilities`, `room_type_rules`, `complaints`, `complaint_attachments`, `notifications`, `whatsapp_verifications`.
+- Constraint: check rentang koordinat, check harga tipe kamar positif dan `available_rooms` antara 0 dan `total_rooms`, unique nama tipe kamar per kost, unique `(kost_id, type)` dokumen izin, indeks unik parsial foto utama, primary key komposit pivot, indeks `(latitude, longitude)`, `(kost_id, status)`, `(user_id, read_at)`, `(status, category)`.
+- Model dengan `HasUuids`, `SoftDeletes` pada `Kost` dan `RoomType`, `$timestamps = false` pada `Facility`, `Rule`, `Specification`, `Photo`, dan `KostDocument`, `const UPDATED_AT = null` pada `Notification`; relasi dan blok `@property` lengkap untuk PHPStan level 7.
+- `RoleSeeder` (customer, pemilik_kost, admin), `FacilitySeeder`, `RuleSeeder`, `SpecificationSeeder`; `UserFactory` menetapkan peran `customer`.
+- Penghapusan berkas pada event model `Kost`, `Photo`, `KostDocument`, `ComplaintAttachment` (tugas 2.4 tertunda dari M0).
 - `ProfileValidationRules` dan `resources/js/types/auth.ts` beralih ke `string` untuk ID; `CreateNewUser` menetapkan `role_id`.
 
 **Exit criteria**
@@ -152,19 +152,19 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 ---
 
-## 7. M2.2 — Pemilik Kost: Kost dan Kamar
+## 7. M2.2 — Pemilik Kost: Kost dan Tipe Kamar
 
 **FR:** FR-KOS-01 s.d. FR-KOS-10, FR-DSH-01.
 
 **Deliverable**
 
-- Dashboard Pemilik Kost: jumlah kost per status verifikasi dan jumlah kamar per status (FR-DSH-01).
+- Dashboard Pemilik Kost: jumlah kost per status verifikasi, jumlah kamar tersedia, dan jumlah kamar terisi per tipe kamar (FR-DSH-01).
 - Daftar kost milik Pemilik beserta status dan alasan penolakan atau penangguhan (FR-KOS-09).
-- Form tambah kost: nama, alamat, kota, titik lokasi, tipe, deskripsi, fasilitas, peraturan, foto, dokumen verifikasi (FR-KOS-01); status awal selalu Menunggu Verifikasi (FR-KOS-02).
-- Form ubah kost (FR-KOS-03), nonaktifkan dan aktifkan kembali (FR-KOS-04), hapus kost beserta kamarnya (FR-KOS-05).
-- Pengelolaan kamar: tambah (FR-KOS-06), ubah dan atur status Tersedia/Terisi/Nonaktif (FR-KOS-07), hapus (FR-KOS-08).
+- Form tambah kost: nama, alamat, kota, titik lokasi, tipe, deskripsi, fasilitas umum dari master, peraturan kost dari master, foto berkategori, dan dokumen izin wajib `nib` serta `surat_pernyataan` (FR-KOS-01); status awal selalu Menunggu Verifikasi (FR-KOS-02).
+- Form ubah kost (FR-KOS-03), nonaktifkan dan aktifkan kembali (FR-KOS-04), hapus kost beserta tipe kamar dan dokumennya (FR-KOS-05).
+- Pengelolaan tipe kamar: tambah dengan status awal Nonaktif (FR-KOS-06), ubah serta aktifkan/nonaktifkan (FR-KOS-07), hapus (FR-KOS-08).
 - Perbaikan dan pengajuan ulang kost yang ditolak (FR-KOS-10).
-- Action `SubmitKost`, `UpdateKost`, `DeactivateKost`, `DeleteKost`, `CreateRoom`, `UpdateRoom`, `UpdateRoomStatus`, `DeleteRoom`; `KostPolicy` dan `RoomPolicy`.
+- Action `SubmitKost`, `UpdateKost`, `DeactivateKost`, `DeleteKost`, `CreateRoomType`, `UpdateRoomType`, `DeleteRoomType`; `KostPolicy` dan `RoomTypePolicy`.
 - Pemilih titik koordinat dengan validasi rentang wilayah Indonesia (tugas 3.4 tertunda dari M0).
 
 **Exit criteria**
@@ -172,12 +172,14 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Kost baru tidak muncul di tampilan publik sebelum disetujui.
 - [ ] Pemilik Kost tidak dapat mengubah atau menghapus kost milik Pemilik lain; permintaan ditolak di server.
 - [ ] Kost berstatus ditangguhkan tidak dapat diaktifkan kembali oleh Pemilik Kost.
-- [ ] Nomor kamar yang sama pada satu kost ditolak; nomor sama pada kost berbeda diterima.
+- [ ] Nama tipe kamar yang sama pada satu kost ditolak; nama sama pada kost berbeda diterima.
+- [ ] Tipe kamar baru berstatus Nonaktif dan tidak tampil kepada publik sampai pemilik mengaktifkannya.
+- [ ] Tipe kamar dengan `available_rooms` melebihi `total_rooms` atau harga nol ditolak basis data.
 - [ ] Koordinat di luar rentang Indonesia ditolak validasi.
 - [ ] Berkas yang gagal disimpan tidak meninggalkan baris basis data; kegagalan transaksi membersihkan berkas yang sudah tertulis.
 - [ ] Dashboard menampilkan angka yang sama dengan hitungan basis data.
 
-**Prasyarat:** M1 (tabel `kosts`, `rooms`, `kost_photos`, `facilities`, `kost_facilities`), M2 (peran dan verifikasi).
+**Prasyarat:** M1 (tabel `kosts`, `room_types`, `photos`, `kost_documents`, `facilities`, `kost_facilities`, `rules`, `kost_rules`, `specifications`, tabel pivot tipe kamar), M2 (peran dan verifikasi).
 
 **Berikutnya:** M3.1 — verifikasi oleh Admin.
 
@@ -190,7 +192,7 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 **Deliverable**
 
 - Dashboard Admin: jumlah kost menunggu verifikasi dan jumlah aduan baru (FR-DSH-02).
-- Daftar kost menunggu verifikasi beserta detail dan dokumen verifikasi lewat tautan bertanda tangan (FR-ADM-VER-01).
+- Daftar kost menunggu verifikasi beserta detail dan lima jenis dokumen izin lewat tautan bertanda tangan (FR-ADM-VER-01).
 - Setujui kost sehingga tampil kepada publik (FR-ADM-VER-02); tolak dengan alasan wajib (FR-ADM-VER-03).
 - Tangguhkan kost yang melanggar ketentuan dengan alasan (FR-ADM-KOS-01).
 - Action `ApproveKost`, `RejectKost`, `SuspendKost` mengisi `reviewed_by`, `reviewed_at`, `status_reason`.
@@ -201,7 +203,7 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Menyetujui kost membuatnya tampil pada halaman publik dan mencatat peninjau beserta waktunya.
 - [ ] Menolak tanpa alasan ditolak validasi.
 - [ ] Kost ditangguhkan hilang dari tampilan publik dan Pemilik Kost menerima notifikasi.
-- [ ] Dokumen verifikasi hanya dapat dibuka Admin melalui tautan bertanda tangan; tautan kedaluwarsa setelah 10 menit.
+- [ ] Dokumen izin hanya dapat dibuka Admin melalui tautan bertanda tangan; tautan kedaluwarsa setelah 10 menit.
 - [ ] Peran selain Admin mendapat 403 pada seluruh route verifikasi.
 
 **Prasyarat:** M2 (kost harus ada untuk diverifikasi).
@@ -218,15 +220,15 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 
 - Penelusuran dan pencarian kost tanpa login (FR-SRC-01).
 - Input lokasi dengan autocomplete Geoapify, konversi ke koordinat (FR-SRC-02).
-- Filter harga, tipe, ketersediaan kamar (FR-SRC-03), dan fasilitas (FR-SRC-04).
+- Filter harga, tipe, ketersediaan tipe kamar aktif dengan `available_rooms` lebih dari nol (FR-SRC-03), dan fasilitas (FR-SRC-04).
 - Pengurutan jarak terdekat, harga, dan terbaru (FR-SRC-05).
-- Hasil per halaman dalam bentuk kartu: foto utama, nama, kota, tipe, harga mulai, jumlah kamar tersedia (FR-SRC-06).
+- Hasil per halaman dalam bentuk kartu: foto utama, nama, kota, tipe, harga mulai dari tipe kamar aktif termurah, jumlah kamar tersedia dari penjumlahan tipe kamar aktif (FR-SRC-06).
 - Penanda hasil pencarian pada peta beserta ringkasan kost terpilih (FR-SRC-07).
-- Halaman detail kost: nama, alamat, lokasi peta, tipe, deskripsi, fasilitas, galeri, peraturan, daftar kamar, nama Pemilik Kost (FR-SRC-08).
+- Halaman detail kost: nama, alamat, lokasi peta, tipe, deskripsi, tipe kamar aktif berurutan (spesifikasi, fasilitas kamar, peraturan khusus, catatan), fasilitas umum, peraturan kost, galeri foto berkategori, nama Pemilik Kost (FR-SRC-08).
 - Hanya kost Disetujui, kost aktif, dan pemilik aktif yang tampil (FR-SRC-09).
 - Pencarian radius: bounding box pada indeks `(latitude, longitude)` dilanjutkan Haversine di SQL (tugas 3.6 tertunda dari M0), tanpa PostGIS.
-- Tombol Hubungi Pemilik dengan pilihan Tanya Kost dan Ajukan Sewa (FR-KTK-01, FR-KTK-02), template pesan terisi nama kost, nomor kamar, dan nama Customer (FR-KTK-03).
-- Ajukan Sewa hanya untuk kamar Tersedia (FR-KTK-04); sistem hanya mengisi draf WhatsApp tanpa mengirim (FR-KTK-05).
+- Tombol Hubungi Pemilik dengan pilihan Tanya Kost dan Ajukan Sewa (FR-KTK-01, FR-KTK-02), template pesan terisi nama kost, nama tipe kamar, harga sewa per bulan, dan nama Customer (FR-KTK-03).
+- Ajukan Sewa hanya untuk tipe kamar aktif dengan kamar tersedia lebih dari nol (FR-KTK-04); sistem hanya mengisi draf WhatsApp tanpa mengirim (FR-KTK-05).
 - Guest diarahkan ke login lalu dikembalikan ke detail kost (FR-KTK-06).
 
 **Exit criteria**
@@ -236,7 +238,7 @@ Kode FR merujuk `docs/FunctionalRequirment/functional_requirment.md` (57 FR, 12 
 - [ ] Filter harga, tipe, ketersediaan, dan fasilitas diterapkan bersamaan tanpa mengabaikan salah satunya.
 - [ ] Paginasi konsisten: jumlah hasil dan halaman sesuai pada peta maupun daftar.
 - [ ] Kost berstatus selain Disetujui, atau milik Pemilik nonaktif, tidak muncul pada daftar maupun detail.
-- [ ] Tombol Ajukan Sewa tidak tersedia untuk kamar Terisi atau Nonaktif.
+- [ ] Tombol Ajukan Sewa tidak tersedia untuk tipe kamar Nonaktif atau tanpa kamar tersedia.
 - [ ] Guest yang memilih Hubungi Pemilik kembali ke detail kost setelah login.
 - [ ] Halaman tanpa `window` aman dirender di SSR (Leaflet dimuat dinamis).
 

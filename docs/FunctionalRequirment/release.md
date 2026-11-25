@@ -15,4 +15,5 @@ Berkas ini mencatat setiap versi dokumen yang dipensiunkan ke `logs/`. Satu doku
 
 | Versi | Berkas | Dibuat | Dipensiunkan | Jenis | Ringkasan | Alasan | Rujukan |
 |---|---|---|---|---|---|---|---|
-| V001 | functional_requirment.md | 17-11-2026:17:45 WIB | - | minor | Versi awal; 58 FR dalam 12 kelompok, termasuk `FR-PRF-04` (foto profil) | Baseline dokumen | `profile-avatar-and-role-home` |
+| V001 | logs/V001-functional_requirment.md | 17-11-2026:17:45 WIB | 25-11-2026:09:28 WIB | minor | Versi awal; 58 FR dalam 12 kelompok, termasuk `FR-PRF-04` (foto profil) | Baseline dokumen | `profile-avatar-and-role-home` |
+| V002 | functional_requirment.md | 25-11-2026:09:28 WIB | - | major | FR-KOS-01/05/06/07/08, FR-SRC-03/06/08, FR-KTK-03/04, FR-ADM-VER-01, FR-ADM-REP-01, dan FR-DSH-01 disesuaikan dengan tipe kamar, dokumen izin per bangunan, master data, dan kartu per kost; FR-ADM-MST-01/02/03 baru untuk CRUD master data | Tipe kamar sebagai unit yang diiklankan dan katalog terkurasi | `restructure-kost-catalog` |

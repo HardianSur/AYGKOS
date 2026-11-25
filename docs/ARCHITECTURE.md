@@ -106,7 +106,8 @@ aygkos/
 |   |   |-- Fortify/                 CreateNewUser, ResetUserPassword (kontrak Fortify)
 |   |   |-- Auth/                    SendWhatsappOtp, VerifyWhatsappOtp, ChangeWhatsappNumber
 |   |   |-- Kost/                     SubmitKost, ApproveKost, RejectKost, SuspendKost, DeactivateKost
-|   |   |-- Room/                     CreateRoom, UpdateRoomStatus
+|   |   |-- RoomType/                 CreateRoomType, UpdateRoomType, DeleteRoomType
+|   |   |-- MasterData/               ManageFacility, ManageRule, ManageSpecification
 |   |   |-- Complaint/                SubmitComplaint, RespondToComplaint
 |   |   `-- Notification/             MarkNotificationRead
 |   |-- Concerns/                     PasswordValidationRules, ProfileValidationRules
@@ -115,33 +116,36 @@ aygkos/
 |   |-- Http/
 |   |   |-- Controllers/
 |   |   |   |-- Catalog/              KostController, KostSearchController
-|   |   |   |-- Owner/                DashboardController, KostController, RoomController, ComplaintController
+|   |   |   |-- Owner/                DashboardController, KostController, RoomTypeController, ComplaintController
 |   |   |   |-- Admin/                DashboardController, KostVerificationController, UserController,
-|   |   |   |                         ComplaintController, ReportController
+|   |   |   |                         ComplaintController, ReportController, FacilityController,
+|   |   |   |                         RuleController, SpecificationController
 |   |   |   |-- Settings/             ProfileController, SecurityController (sudah ada)
 |   |   |   `-- NotificationController.php
 |   |   |-- Middleware/               HandleAppearance, HandleInertiaRequests, EnsureRole, EnsureAccountVerified
 |   |   `-- Requests/
 |   |       |-- Auth/                 RegisterOwnerRequest, VerifyOtpRequest, UpdateWhatsappRequest
 |   |       |-- Kost/                 StoreKostRequest, UpdateKostRequest, KostSearchRequest
-|   |       |-- Room/                 StoreRoomRequest, UpdateRoomRequest
+|   |       |-- RoomType/             StoreRoomTypeRequest, UpdateRoomTypeRequest
 |   |       |-- Complaint/            StoreComplaintRequest, RespondComplaintRequest
-|   |       |-- Admin/                RejectKostRequest, SuspendKostRequest, UpdateUserStatusRequest
+|   |       |-- Admin/                RejectKostRequest, SuspendKostRequest, UpdateUserStatusRequest,
+|   |       |                         StoreFacilityRequest, StoreRuleRequest, StoreSpecificationRequest
 |   |       |-- Settings/             ProfileUpdateRequest, PasswordUpdateRequest, ... (sudah ada)
-|   |       `-- Uploads/              KostPhotoUploadRequest, VerificationDocumentUploadRequest,
+|   |       `-- Uploads/              KostPhotoUploadRequest, KostDocumentUploadRequest,
 |   |                                 ComplaintAttachmentUploadRequest (sudah ada)
-|   |-- Models/                       Role, User, WhatsappVerification, Kost, KostPhoto, Facility,
-|   |                                 Room, Complaint, ComplaintAttachment, Notification
-|   |-- Policies/                     KostPolicy, RoomPolicy, ComplaintPolicy, UserPolicy
+|   |-- Models/                       Role, User, WhatsappVerification, Kost, RoomType, Photo,
+|   |                                 KostDocument, Facility, Rule, Specification,
+|   |                                 Complaint, ComplaintAttachment, Notification
+|   |-- Policies/                     KostPolicy, RoomTypePolicy, ComplaintPolicy, UserPolicy
 |   |-- Providers/                    AppServiceProvider, FortifyServiceProvider
 |   |-- Services/
 |   |   `-- Otp/                      LogOtpSender, FonnteOtpSender
-|   `-- Support/                      PrivateFileUrl, WhatsappNumber (normalisasi +62)
+|   `-- Support/                      PrivateFileUrl, WhatsappNumber (normalisasi +62), FacilityIcons
 |-- config/                           otp.php, uploads.php, services.php (fonnte, geoapify), fortify.php
 |-- database/
 |   |-- migrations/                   Satu berkas per tabel; constraint check lewat DB::statement
 |   |-- factories/                    Satu factory per model yang diuji
-|   `-- seeders/                      RoleSeeder, FacilitySeeder, DatabaseSeeder
+|   `-- seeders/                      RoleSeeder, FacilitySeeder, RuleSeeder, SpecificationSeeder, DatabaseSeeder
 |-- docs/
 |   |-- ARCHITECTURE.md               Dokumen ini
 |   |-- ERD/                          erd.md (versi terkini), logs/, release.md
@@ -198,7 +202,7 @@ Seluruh route berada di `routes/web.php` (domain) dan `routes/settings.php` (aku
 | --- | ----------------- | ---------------------------------------------------------------------------------- | ---------------------- | ----- |
 | 1   | Beranda           | Titik masuk aplikasi, ringkasan nilai, dan pintu ke pencarian kost.                | `/`                    | Guest |
 | 2   | Pencarian Kost    | Penelusuran, pencarian lokasi radius 10 km, filter harga/tipe/ketersediaan/fasilitas, pengurutan, hasil per halaman dan pada peta. | `/kosts` | Guest, Customer |
-| 3   | Detail Kost       | Nama, alamat, lokasi pada peta, tipe, deskripsi, fasilitas, galeri, peraturan, daftar kamar, dan nama Pemilik Kost. | `/kosts/{kost}` | Guest, Customer |
+| 3   | Detail Kost       | Nama, alamat, lokasi pada peta, tipe, deskripsi, tipe kamar aktif berurutan (spesifikasi, fasilitas kamar, peraturan khusus, catatan), fasilitas umum, peraturan kost, galeri foto berkategori, dan nama Pemilik Kost. | `/kosts/{kost}` | Guest, Customer |
 | 4   | Login             | Autentikasi email dan password untuk ketiga peran.                                  | `/login`               | Guest |
 | 5   | Registrasi        | Pendaftaran Customer atau Pemilik Kost; peran Admin tidak tersedia.                 | `/register`            | Guest |
 | 6   | Lupa Password     | Permintaan tautan reset password melalui email.                                     | `/forgot-password`     | Guest |
@@ -222,22 +226,25 @@ Seluruh route berada di `routes/web.php` (domain) dan `routes/settings.php` (aku
 
 | No. | Nama Halaman      | Tujuan                                                                             | Route                        | Akses |
 | --- | ----------------- | ---------------------------------------------------------------------------------- | ---------------------------- | ----- |
-| 17  | Dashboard Pemilik | Jumlah kost per status verifikasi dan jumlah kamar per status.                      | `/owner/dashboard`           | Pemilik Kost |
+| 17  | Dashboard Pemilik | Jumlah kost per status verifikasi, jumlah kamar tersedia, dan jumlah kamar terisi per tipe kamar. | `/owner/dashboard`           | Pemilik Kost |
 | 18  | Daftar Kost       | Kost milik Pemilik beserta status verifikasi, alasan penolakan atau penangguhan.    | `/owner/kosts`               | Pemilik Kost |
-| 19  | Tambah Kost       | Form pengajuan kost: data, titik lokasi, fasilitas, peraturan, foto, dokumen verifikasi. | `/owner/kosts/create`   | Pemilik Kost |
+| 19  | Tambah Kost       | Form pengajuan kost: data, titik lokasi, fasilitas umum, peraturan dari master, foto berkategori, dan dokumen izin. | `/owner/kosts/create`   | Pemilik Kost |
 | 20  | Ubah Kost         | Perubahan data kost dan pengajuan ulang kost yang ditolak.                          | `/owner/kosts/{kost}/edit`   | Pemilik Kost |
-| 21  | Kamar Kost        | Daftar kamar, tambah, ubah, atur status, dan hapus kamar.                           | `/owner/kosts/{kost}/rooms`  | Pemilik Kost |
+| 21  | Tipe Kamar Kost   | Daftar tipe kamar, tambah, ubah, aktifkan/nonaktifkan, dan hapus tipe kamar.        | `/owner/kosts/{kost}/types`  | Pemilik Kost |
 
 ### 5.4 Area Admin
 
 | No. | Nama Halaman       | Tujuan                                                                            | Route                          | Akses |
 | --- | ------------------ | --------------------------------------------------------------------------------- | ------------------------------ | ----- |
 | 22  | Dashboard Admin    | Jumlah kost menunggu verifikasi dan jumlah aduan baru.                             | `/admin/dashboard`             | Admin |
-| 23  | Verifikasi Kost    | Daftar kost menunggu verifikasi beserta detail dan dokumen verifikasi.             | `/admin/kosts/verification`    | Admin |
+| 23  | Verifikasi Kost    | Daftar kost menunggu verifikasi beserta detail dan lima jenis dokumen izinnya.    | `/admin/kosts/verification`    | Admin |
 | 24  | Detail Verifikasi  | Detail kost, dokumen, serta aksi setujui atau tolak dengan alasan; penangguhan kost. | `/admin/kosts/{kost}`        | Admin |
 | 25  | Pengelolaan Pengguna | Daftar pengguna, penonaktifan dan pengaktifan akun.                              | `/admin/users`                 | Admin |
 | 26  | Penanganan Aduan   | Daftar aduan dengan filter status dan kategori, detail, ubah status, tulis tanggapan. | `/admin/complaints`         | Admin |
 | 27  | Laporan            | Statistik jumlah kost per status, kamar tersedia, pengguna per peran, aduan per status, dengan filter periode. | `/admin/reports` | Admin |
+| 28  | Master Fasilitas   | Daftar, tambah, ubah, dan hapus master fasilitas beserta ruang lingkup dan ikon.    | `/admin/facilities`            | Admin |
+| 29  | Master Peraturan   | Daftar, tambah, ubah, dan hapus master peraturan beserta ruang lingkupnya.           | `/admin/rules`                 | Admin |
+| 30  | Master Spesifikasi | Daftar, tambah, ubah, dan hapus master spesifikasi beserta jenis masukan dan satuan. | `/admin/specifications`        | Admin |
 
 ### 5.5 Route Tanpa Halaman
 
@@ -256,17 +263,17 @@ Seluruh route berada di `routes/web.php` (domain) dan `routes/settings.php` (aku
 | Komponen                  | Kegunaan                                                       |
 | ------------------------- | -------------------------------------------------------------- |
 | `AppHeader`, `AppSidebar` | Identitas aplikasi dan navigasi sesuai peran.                   |
-| `KostCard`                | Kartu hasil pencarian: foto utama, nama, kota, tipe, harga mulai, jumlah kamar tersedia. |
+| `KostCard`                | Kartu hasil pencarian: foto utama, nama, kota, tipe, harga mulai dari tipe kamar aktif termurah, jumlah kamar tersedia dari penjumlahan tipe kamar aktif. |
 | `LeafletMap`              | Peta titik hasil pencarian dan peta lokasi pada detail kost.    |
 | `LocationAutocomplete`    | Input lokasi dengan autocomplete Geoapify.                      |
-| `KostStatusBadge`         | Label status verifikasi kost dan status kamar.                  |
+| `KostStatusBadge`         | Label status verifikasi kost dan status tipe kamar.             |
 | `ConfirmDialog`           | Konfirmasi tindakan penting (hapus kost, nonaktifkan akun).     |
 | `EmptyState`              | Tampilan ketika hasil pencarian atau daftar kosong.             |
 | `SubmitButton`            | Tombol dengan status memproses.                                 |
 | `InputError`, `AlertError`| Pesan galat per kolom dan galat umum.                           |
 | `Toaster`                 | Notifikasi toast (sonner).                                      |
 
-Form panjang (pengajuan kost, aduan) memakai halaman tersendiri; form pendek (kamar, ubah nama) memakai dialog. Konfirmasi tindakan destruktif selalu memakai dialog konfirmasi.
+Form panjang (pengajuan kost, aduan) memakai halaman tersendiri; form pendek (tipe kamar, ubah nama) memakai dialog. Konfirmasi tindakan destruktif selalu memakai dialog konfirmasi.
 
 ---
 
@@ -285,9 +292,12 @@ Pemilik Kost          Laravel                        Admin
      |                    | Action SubmitKost:          |
      |                    |  - simpan kosts (status      |
      |                    |    menunggu_verifikasi)     |
-     |                    |  - simpan foto -> disk public|
-     |                    |  - simpan dokumen -> local  |
-     |                    |  - simpan fasilitas pivot   |
+     |                    |  - simpan foto berkategori   |
+     |                    |    -> disk public           |
+     |                    |  - simpan dokumen izin      |
+     |                    |    -> disk local            |
+     |                    |  - simpan fasilitas umum    |
+     |                    |    dan peraturan pivot      |
      |<-------------------| redirect + toast            |
      |                    |                            |
      |                    |  GET /admin/kosts/verification
@@ -302,10 +312,10 @@ Pemilik Kost          Laravel                        Admin
 
 Rincian langkah:
 
-1. `GET /owner/kosts/create` mengirim prop daftar fasilitas dan kunci Geoapify.
-2. Form mengirim `multipart/form-data`; `StoreKostRequest` memvalidasi kolom wajib, koordinat, minimal satu foto, dan dokumen verifikasi sesuai `config/uploads.php`.
+1. `GET /owner/kosts/create` mengirim prop daftar fasilitas umum, peraturan kost, dan kunci Geoapify.
+2. Form mengirim `multipart/form-data`; `StoreKostRequest` memvalidasi kolom wajib, koordinat, minimal satu foto, serta dokumen wajib `nib` dan `surat_pernyataan` sesuai `config/uploads.php`.
 3. `KostPolicy::create` memastikan pelaku berperan `pemilik_kost` dan akunnya aktif serta terverifikasi.
-4. `SubmitKost` berjalan dalam satu transaksi: baris `kosts`, `kost_photos`, `kost_facilities`. Berkas ditulis ke disk lebih dulu; bila transaksi gagal, berkas yang sudah tertulis dihapus.
+4. `SubmitKost` berjalan dalam satu transaksi: baris `kosts`, `photos`, `kost_facilities`, `kost_rules`, dan `kost_documents`. Berkas ditulis ke disk lebih dulu; bila transaksi gagal, berkas yang sudah tertulis dihapus.
 5. Status awal selalu `menunggu_verifikasi`; tidak ada jalur yang membuat kost langsung `disetujui` (FR-KOS-02).
 6. Aksi Admin memanggil `ApproveKost`, `RejectKost`, atau `SuspendKost`; masing-masing mengisi `reviewed_by`, `reviewed_at`, `status_reason`, lalu membuat baris `notifications`.
 7. Halaman publik hanya membaca `kosts` berstatus `disetujui`, tidak terhapus lunak, dan pemiliknya `is_active = true` (FR-SRC-09).
@@ -328,14 +338,23 @@ Input lokasi  -->  Geoapify Autocomplete (klien)  -->  { lat, lng }
 - Autocomplete hanya memanggil Geoapify setelah masukan diam 400 ms dan membatalkan permintaan lama (`use-debounced-value`).
 - Server menerima koordinat dan radius, menyaring kandidat dengan bounding box agar indeks komposit terpakai, lalu menghitung jarak sebenarnya dengan rumus Haversine di SQL. Tanpa PostGIS.
 - Filter harga, tipe, ketersediaan kamar, dan fasilitas diterapkan sebagai klausa tambahan pada query yang sama; pengurutan jarak hanya tersedia bila koordinat dikirim.
+- Ketersediaan dan harga memakai `EXISTS` pada `room_types` aktif, sehingga satu kost tetap satu baris hasil meski memiliki beberapa tipe kamar.
 - Hasil dipaginasi di server; peta menerima himpunan penanda halaman aktif.
 
 ### 6.3 Kontak Pemilik melalui WhatsApp
 
 1. Guest yang memilih tombol Hubungi Pemilik diarahkan ke `/login` dengan URL detail kost disimpan sebagai tujuan kembali (FR-KTK-06).
-2. Customer terautentikasi mengirim `POST /kosts/{kost}/contact` dengan pilihan Tanya Kost atau Ajukan Sewa, plus kamar bila Ajukan Sewa.
-3. Server memvalidasi kamar berstatus `tersedia` untuk Ajukan Sewa (FR-KTK-04), menyusun teks pesan berisi nama kost, nomor kamar, dan nama Customer, lalu mengembalikan URL `https://wa.me/<nomor>?text=...`.
+2. Customer terautentikasi mengirim `POST /kosts/{kost}/contact` dengan pilihan Tanya Kost atau Ajukan Sewa, plus tipe kamar bila Ajukan Sewa.
+3. Server memvalidasi tipe kamar berstatus `aktif` dengan `available_rooms` lebih dari nol untuk Ajukan Sewa (FR-KTK-04), menyusun teks pesan berisi nama kost, nama tipe kamar, harga sewa per bulan, dan nama Customer, lalu mengembalikan URL `https://wa.me/<nomor>?text=...`.
 4. Klien membuka URL tersebut; pesan tetap berupa draf yang dapat diubah sebelum dikirim (FR-KTK-05). Sistem tidak pernah mengirim pesan sendiri.
+
+### 6.4 Tipe Kamar, Fasilitas, dan Galeri
+
+- Tipe kamar disimpan pada `room_types` dengan status awal `nonaktif`; bagian `POST /owner/kosts/{kost}/types` mengaktifkannya setelah pemilik meninjau isinya.
+- Fasilitas dan peraturan dipilih dari master sesuai `scope`: fasilitas `umum` dan aturan `kost` pada kost, fasilitas `kamar` dan aturan `kamar` pada tipe kamar. Master yang masih dipakai ditahan oleh `restrict`, sehingga daftar pemakainya ditampilkan sebelum Admin menghapus.
+- Spesifikasi hanya melekat pada tipe kamar; nilai disimpan di `room_type_specifications.value`.
+- Galeri detail kost memakai satu tabel `photos`: kategori `bangunan` dan `fasilitas_umum` di level kost, kategori `kamar` dan `kamar_mandi` di level tipe kamar. Halaman detail hanya menampilkan foto utama; galeri penuh menampilkan sisa foto terkelompok per kategori.
+- Foto utama dijaga indeks unik parsial: satu per kost untuk foto level kost, satu per tipe kamar untuk foto level tipe kamar.
 
 ---
 
@@ -363,7 +382,7 @@ Middleware `verified` bawaan framework hanya membaca `email_verified_at`, sehing
 ### 7.3 Otorisasi
 
 - Middleware `EnsureRole` dipasang per grup route: `role:pemilik_kost` untuk `/owner/*`, `role:admin` untuk `/admin/*`.
-- Policy menegakkan kepemilikan sumber daya, bukan hanya peran: `KostPolicy::update` memeriksa `kost.owner_id`, `RoomPolicy::*` memeriksa rantai `room.kost.owner_id`, `ComplaintPolicy::view` memeriksa `complaint.user_id`.
+- Policy menegakkan kepemilikan sumber daya, bukan hanya peran: `KostPolicy::update` memeriksa `kost.owner_id`, `RoomTypePolicy::*` memeriksa rantai `roomType.kost.owner_id`, `ComplaintPolicy::view` memeriksa `complaint.user_id`.
 - Kost berstatus `ditangguhkan` tidak dapat diaktifkan kembali oleh Pemilik Kost; hanya Admin yang boleh mengubahnya (FR-ADM-KOS-01).
 - Akun dengan `is_active = false` ditolak saat login dan seluruh kost miliknya hilang dari tampilan publik (FR-ADM-USR-01).
 
@@ -385,13 +404,13 @@ Dua disk dengan visibilitas berbeda, ditetapkan di `config/filesystems.php`:
 
 | Jenis berkas                                  | Disk      | Lokasi                    | Penyajian                                  |
 | --------------------------------------------- | --------- | ------------------------- | ------------------------------------------ |
-| Foto kost                                     | `public`  | `storage/app/public`      | URL publik melalui symlink `/storage`      |
-| Dokumen verifikasi kost (KTP/bukti kepemilikan) | `local`  | `storage/app/private`     | Tautan bertanda tangan berumur 10 menit    |
+| Foto kost dan tipe kamar                      | `public`  | `storage/app/public`      | URL publik melalui symlink `/storage`      |
+| Dokumen izin kost (lima jenis, PDF)           | `local`   | `storage/app/private`     | Tautan bertanda tangan berumur 10 menit    |
 | Lampiran aduan (maksimal 3)                   | `local`   | `storage/app/private`     | Tautan bertanda tangan berumur 10 menit    |
 
 Aturan:
 
-- Basis data menyimpan **path**, bukan URL. Kolom terkait: `kost_photos.photo_path`, `kosts.verification_document_path`, `complaint_attachments.file_path`.
+- Basis data menyimpan **path**, bukan URL. Kolom terkait: `photos.photo_path`, `kost_documents.file_path`, `complaint_attachments.file_path`.
 - Tautan berkas privat dibentuk dengan `App\Support\PrivateFileUrl::for($path)`, yang memanggil route `storage.local` bertanda tangan relatif. Adapter `local` tidak mendukung `Storage::temporaryUrl()`.
 - Batas tipe dan ukuran berkas berada di `config/uploads.php` dan dipakai aturan `mimes`/`max` pada Form Request di `app/Http/Requests/Uploads/`.
 - Penghapusan berkas terjadi pada event model (`deleting`, `updated`), bukan di controller, karena kost juga dapat dihapus atau diubah lewat alur Admin. Berkas dihapus setelah transaksi basis data berhasil; kegagalan hapus berkas dicatat ke log dan tidak membatalkan perubahan data.
@@ -406,8 +425,8 @@ Aturan:
 - Aturan TypeScript hanya untuk kenyamanan; server tetap memeriksa ulang.
 - Galat validasi Inertia dikembalikan ke form; password tidak pernah dipertahankan pada nilai lama.
 - Kegagalan tak terduga tidak membocorkan detail internal; pengguna menerima pesan umum dan pesan teknis masuk log.
-- Status direpresentasikan sebagai string enumerasi (`menunggu_verifikasi`, `disetujui`, `ditolak`, `nonaktif`, `ditangguhkan`; kamar: `tersedia`, `terisi`, `nonaktif`) dan ditegakkan oleh validasi fitur, bukan kolom enum basis data.
-- Penghapusan memakai `SoftDeletes` pada `kosts` dan `rooms`; aduan tidak dihapus, melainkan diubah statusnya menjadi `selesai`.
+- Status direpresentasikan sebagai string enumerasi (`menunggu_verifikasi`, `disetujui`, `ditolak`, `nonaktif`, `ditangguhkan`; tipe kamar: `aktif`, `nonaktif`) dan ditegakkan oleh validasi fitur, bukan kolom enum basis data.
+- Penghapusan memakai `SoftDeletes` pada `kosts` dan `room_types`; aduan tidak dihapus, melainkan diubah statusnya menjadi `selesai`.
 
 ---
 
