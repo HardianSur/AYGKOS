@@ -16,6 +16,7 @@
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
+    --radius-xl: 0.875rem;
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -77,6 +78,8 @@
     --color-ember: var(--brand-ember);
     --color-ember-ink: var(--brand-ember-ink);
     --color-ember-wash: var(--brand-ember-wash);
+    --color-danger: var(--brand-danger);
+    --color-danger-ink: var(--brand-danger-ink);
 }
 
 :root {
@@ -164,6 +167,8 @@
     --brand-ember: #ff7a1a;
     --brand-ember-ink: #b54708;
     --brand-ember-wash: #fff1e6;
+    --brand-danger: #b42318;
+    --brand-danger-ink: #fdecea;
 }
 
 .dark {
@@ -176,6 +181,8 @@
     --brand-ember: #ff8a2b;
     --brand-ember-ink: #ff8a2b;
     --brand-ember-wash: #3b2a20;
+    --brand-danger: #ff8a80;
+    --brand-danger-ink: #12152a;
 }
 
 @layer base {

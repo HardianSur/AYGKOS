@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { useState } from 'react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -28,6 +29,7 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { LogoutDialog } from '@/components/logout-dialog';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
@@ -68,6 +70,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const { auth } = page.props;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+    const [logoutOpen, setLogoutOpen] = useState(false);
 
     return (
         <>
@@ -229,7 +232,12 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">
                                 {auth.user && (
-                                    <UserMenuContent user={auth.user} />
+                                    <UserMenuContent
+                                        user={auth.user}
+                                        onRequestLogout={() =>
+                                            setLogoutOpen(true)
+                                        }
+                                    />
                                 )}
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -243,6 +251,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
                 </div>
             )}
+            <LogoutDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
         </>
     );
 }
