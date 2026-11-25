@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\WhatsappVerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         );
     })->name('dashboard');
 });
+
+Route::middleware(['auth', 'verified', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('dashboard', DashboardController::class)->name('dashboard');
+    });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-whatsapp', [WhatsappVerificationController::class, 'show'])
