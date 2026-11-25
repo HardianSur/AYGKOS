@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Auth\WhatsappVerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+        Route::get('facilities', [FacilityController::class, 'index'])->name('facilities.index');
+        Route::post('facilities', [FacilityController::class, 'store'])->name('facilities.store');
+        Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
+        Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
     });
 
 Route::middleware(['auth'])->group(function () {
