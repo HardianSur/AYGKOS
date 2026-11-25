@@ -55,7 +55,7 @@ Marketplace kost berbasis Laravel 13 + Inertia v3 + React 19 + Tailwind v4 (PHP 
 - Peran pengguna: Customer, Pemilik Kost, Admin. Kode FR antara lain `FR-AUT-xx`, `FR-KOS-xx`, `FR-ADM-xx`, `FR-SRC-xx`, `FR-ADU-xx`, `FR-NTF-xx`. Pertahankan istilah ini.
 - Versi dokumen ERD dan FR: versi terbaru di berkas utama, versi lama dibekukan di `logs/` sebagai `V<3 digit>-<dokumen>.md`, dan ditambahkan ke `release.md`. Aturan lengkap di `openspec/config.yaml`.
 - Dokumen proyek ditulis dalam bahasa Indonesia. Gaya pesan commit mengikuti `git log` yang ada (mis. `ADD :`, `FIX :`, `feat(scope):`).
-- File lokal yang tetap gitignored: `/opencode.json`, `/.agents`, `/boost.json`, `/CLAUDE.md`, `.env.lerd_override`. `AGENTS.md` sudah ikut di-commit, jangan menganggapnya lokal.
+- File lokal yang tetap gitignored: `/opencode.json`, `/boost.json`, `/CLAUDE.md`, `.env.lerd_override`. `AGENTS.md` dan `.agents/` sudah ikut di-commit, jangan menganggapnya lokal.
 
 ## Sebelum selesai
 
