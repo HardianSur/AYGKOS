@@ -27,9 +27,9 @@ return [
         'mimes' => ['jpg', 'jpeg', 'png', 'webp'],
     ],
 
-    'verification_document' => [
+    'kost_document' => [
         'max_kb' => 5 * 1024,
-        'mimes' => ['jpg', 'jpeg', 'png', 'pdf'],
+        'mimes' => ['pdf'],
     ],
 
     'complaint_attachment' => [
@@ -37,5 +37,7 @@ return [
         'max_files' => 3,
         'mimes' => ['jpg', 'jpeg', 'png', 'pdf'],
     ],
+
+    'kost_documents_wajib' => ['nib', 'surat_pernyataan'],
 
 ];

@@ -10,11 +10,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property string $id
  * @property string $kost_id
+ * @property string|null $room_type_id
+ * @property string $category
  * @property string $photo_path
+ * @property int $sort_order
  * @property bool $is_primary
  */
-#[Fillable(['kost_id', 'photo_path', 'is_primary'])]
-class KostPhoto extends Model
+#[Fillable([
+    'kost_id', 'room_type_id', 'category', 'photo_path', 'sort_order', 'is_primary',
+])]
+class Photo extends Model
 {
     use HasUuids;
 
@@ -28,6 +33,7 @@ class KostPhoto extends Model
     protected function casts(): array
     {
         return [
+            'sort_order' => 'integer',
             'is_primary' => 'boolean',
         ];
     }
@@ -38,5 +44,13 @@ class KostPhoto extends Model
     public function kost(): BelongsTo
     {
         return $this->belongsTo(Kost::class);
+    }
+
+    /**
+     * @return BelongsTo<RoomType, $this>
+     */
+    public function roomType(): BelongsTo
+    {
+        return $this->belongsTo(RoomType::class);
     }
 }
