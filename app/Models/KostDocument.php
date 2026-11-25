@@ -6,23 +6,19 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
  * @property string $kost_id
- * @property string $room_number
- * @property int $price_per_month
- * @property string $status
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property string $type
+ * @property string $file_path
  */
-#[Fillable(['kost_id', 'room_number', 'price_per_month', 'status'])]
-class Room extends Model
+#[Fillable(['kost_id', 'type', 'file_path'])]
+class KostDocument extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids;
+
+    public $timestamps = false;
 
     /**
      * @return BelongsTo<Kost, $this>

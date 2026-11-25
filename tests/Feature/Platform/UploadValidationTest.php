@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Requests\Uploads\ComplaintAttachmentUploadRequest;
+use App\Http\Requests\Uploads\KostDocumentUploadRequest;
 use App\Http\Requests\Uploads\KostPhotoUploadRequest;
-use App\Http\Requests\Uploads\VerificationDocumentUploadRequest;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 beforeEach(function () {
     Route::post('/__test/uploads/kost-photo', fn (KostPhotoUploadRequest $request) => response()->noContent())
         ->middleware('web');
-    Route::post('/__test/uploads/verification-document', fn (VerificationDocumentUploadRequest $request) => response()->noContent())
+    Route::post('/__test/uploads/kost-document', fn (KostDocumentUploadRequest $request) => response()->noContent())
         ->middleware('web');
     Route::post('/__test/uploads/complaint-attachment', fn (ComplaintAttachmentUploadRequest $request) => response()->noContent())
         ->middleware('web');
@@ -36,22 +36,32 @@ it('menerima foto kost yang valid', function () {
     ])->assertNoContent();
 });
 
-it('menolak dokumen verifikasi bertipe tidak diizinkan pada kolom yang benar', function () {
-    $this->post('/__test/uploads/verification-document', [
-        'verification_document' => UploadedFile::fake()->create('ktp.exe', 100, 'application/octet-stream'),
-    ])->assertSessionHasErrors('verification_document');
-});
-
-it('menolak dokumen verifikasi yang melebihi batas ukuran', function () {
-    $this->post('/__test/uploads/verification-document', [
-        'verification_document' => UploadedFile::fake()->create('ktp.pdf', 6000, 'application/pdf'),
-    ])->assertSessionHasErrors('verification_document');
-});
-
-it('menerima dokumen verifikasi yang valid', function () {
-    $this->post('/__test/uploads/verification-document', [
-        'verification_document' => UploadedFile::fake()->create('ktp.pdf', 100, 'application/pdf'),
+it('menerima dokumen izin berupa pdf yang valid', function () {
+    $this->post('/__test/uploads/kost-document', [
+        'type' => 'nib',
+        'document' => UploadedFile::fake()->create('nib.pdf', 100, 'application/pdf'),
     ])->assertNoContent();
+});
+
+it('menolak jenis dokumen izin di luar daftar pada kolom type', function () {
+    $this->post('/__test/uploads/kost-document', [
+        'type' => 'ktp',
+        'document' => UploadedFile::fake()->create('ktp.pdf', 100, 'application/pdf'),
+    ])->assertSessionHasErrors('type');
+});
+
+it('menolak dokumen izin selain pdf pada kolom document', function () {
+    $this->post('/__test/uploads/kost-document', [
+        'type' => 'nib',
+        'document' => UploadedFile::fake()->create('nib.jpg', 100, 'image/jpeg'),
+    ])->assertSessionHasErrors('document');
+});
+
+it('menolak dokumen izin yang melebihi batas ukuran', function () {
+    $this->post('/__test/uploads/kost-document', [
+        'type' => 'nib',
+        'document' => UploadedFile::fake()->create('nib.pdf', 6000, 'application/pdf'),
+    ])->assertSessionHasErrors('document');
 });
 
 it('menolak lampiran aduan melebihi jumlah maksimum', function () {

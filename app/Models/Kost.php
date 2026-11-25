@@ -22,10 +22,8 @@ use Illuminate\Support\Carbon;
  * @property string $longitude
  * @property string $type
  * @property string|null $description
- * @property string|null $rules
  * @property string $status
  * @property string|null $status_reason
- * @property string $verification_document_path
  * @property Carbon|null $reviewed_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -33,8 +31,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable([
     'owner_id', 'reviewed_by', 'name', 'address', 'city', 'latitude', 'longitude',
-    'type', 'description', 'rules', 'status', 'status_reason',
-    'verification_document_path', 'reviewed_at',
+    'type', 'description', 'status', 'status_reason', 'reviewed_at',
 ])]
 class Kost extends Model
 {
@@ -69,11 +66,27 @@ class Kost extends Model
     }
 
     /**
-     * @return HasMany<KostPhoto, $this>
+     * @return HasMany<Photo, $this>
      */
     public function photos(): HasMany
     {
-        return $this->hasMany(KostPhoto::class);
+        return $this->hasMany(Photo::class);
+    }
+
+    /**
+     * @return HasMany<RoomType, $this>
+     */
+    public function roomTypes(): HasMany
+    {
+        return $this->hasMany(RoomType::class);
+    }
+
+    /**
+     * @return HasMany<KostDocument, $this>
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(KostDocument::class);
     }
 
     /**
@@ -85,11 +98,11 @@ class Kost extends Model
     }
 
     /**
-     * @return HasMany<Room, $this>
+     * @return BelongsToMany<Rule, $this>
      */
-    public function rooms(): HasMany
+    public function kostRules(): BelongsToMany
     {
-        return $this->hasMany(Room::class);
+        return $this->belongsToMany(Rule::class, 'kost_rules');
     }
 
     /**
