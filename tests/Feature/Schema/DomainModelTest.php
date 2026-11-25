@@ -178,6 +178,16 @@ it('only accepts facility icons from the shared list', function () {
     }
 });
 
+it('menolak nama fasilitas yang hanya berbeda huruf besar', function () {
+    Facility::create(['name' => 'WiFi', 'scope' => 'umum', 'icon' => 'wifi']);
+
+    expect(fn () => DB::transaction(fn () => Facility::create([
+        'name' => 'wifi',
+        'scope' => 'umum',
+        'icon' => 'wifi',
+    ])))->toThrow(QueryException::class);
+});
+
 it('fills the id through HasUuids and lets multiple users omit whatsapp_number', function () {
     $role = Role::firstOrCreate(['name' => 'customer']);
 

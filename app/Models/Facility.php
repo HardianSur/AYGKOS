@@ -27,4 +27,12 @@ class Facility extends Model
     {
         return $this->belongsToMany(Kost::class, 'kost_facilities');
     }
+
+    /**
+     * @return BelongsToMany<RoomType, $this>
+     */
+    public function roomTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(RoomType::class, 'room_type_facilities');
+    }
 }

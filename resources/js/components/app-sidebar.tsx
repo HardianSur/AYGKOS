@@ -1,5 +1,11 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, ShieldCheck } from 'lucide-react';
+import {
+    BookOpen,
+    Building2,
+    FolderGit2,
+    LayoutGrid,
+    ShieldCheck,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
+import { index as facilities } from '@/routes/admin/facilities';
 import type { NavItem } from '@/types';
 
 const footerNavItems: NavItem[] = [
@@ -45,6 +52,11 @@ export function AppSidebar() {
                       title: 'Admin',
                       href: adminDashboard(),
                       icon: ShieldCheck,
+                  },
+                  {
+                      title: 'Fasilitas',
+                      href: facilities(),
+                      icon: Building2,
                   },
               ]
             : []),
