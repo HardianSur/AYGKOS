@@ -22,6 +22,7 @@ import {
 import { dashboard } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as facilities } from '@/routes/admin/facilities';
+import { index as ownerKosts } from '@/routes/owner/kosts';
 import type { NavItem } from '@/types';
 
 const footerNavItems: NavItem[] = [
@@ -39,6 +40,7 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const isAdmin = usePage().props.auth.user?.role === 'admin';
+    const isOwner = usePage().props.auth.user?.role === 'pemilik_kost';
 
     const mainNavItems: NavItem[] = [
         {
@@ -46,6 +48,15 @@ export function AppSidebar() {
             href: dashboard(),
             icon: LayoutGrid,
         },
+        ...(isOwner
+            ? [
+                  {
+                      title: 'Kost Saya',
+                      href: ownerKosts(),
+                      icon: Building2,
+                  },
+              ]
+            : []),
         ...(isAdmin
             ? [
                   {
