@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,6 +22,7 @@ export function NavUser() {
     const { state } = useSidebar();
     const isMobile = useIsMobile();
     const [logoutOpen, setLogoutOpen] = useState(false);
+    const userMenuButtonRef = useRef<HTMLButtonElement>(null);
 
     if (!auth.user) {
         return null;
@@ -34,6 +35,7 @@ export function NavUser() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <SidebarMenuButton
+                                ref={userMenuButtonRef}
                                 size="lg"
                                 className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
                                 data-test="sidebar-menu-button"
@@ -61,7 +63,11 @@ export function NavUser() {
                     </DropdownMenu>
                 </SidebarMenuItem>
             </SidebarMenu>
-            <LogoutDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
+            <LogoutDialog
+                open={logoutOpen}
+                onOpenChange={setLogoutOpen}
+                returnFocusRef={userMenuButtonRef}
+            />
         </>
     );
 }

@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -16,11 +16,13 @@ import { logout } from '@/routes';
 type Props = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    returnFocusRef?: React.RefObject<HTMLButtonElement | null>;
 };
 
-export function LogoutDialog({ open, onOpenChange }: Props) {
+export function LogoutDialog({ open, onOpenChange, returnFocusRef }: Props) {
     const [processing, setProcessing] = useState(false);
     const cleanup = useMobileNavigation();
+    const loggingOut = useRef(false);
 
     const handleLogout = () => {
         if (processing) {
@@ -30,6 +32,7 @@ export function LogoutDialog({ open, onOpenChange }: Props) {
         setProcessing(true);
         cleanup();
         router.flushAll();
+        loggingOut.current = true;
         router.post(
             logout.url(),
             {},
@@ -42,12 +45,26 @@ export function LogoutDialog({ open, onOpenChange }: Props) {
         );
     };
 
+    const handleOpenChange = (next: boolean) => {
+        if (next) {
+            loggingOut.current = false;
+        }
+        onOpenChange(next);
+    };
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent
                 className="rounded-xl border-hairline bg-surface text-ink shadow-[0_4px_16px_rgb(18_21_42/0.12)]"
                 overlayClassName="bg-night/60"
                 showCloseButton={false}
+                onCloseAutoFocus={(event) => {
+                    if (loggingOut.current || !returnFocusRef?.current) {
+                        return;
+                    }
+                    event.preventDefault();
+                    returnFocusRef.current.focus();
+                }}
             >
                 <DialogHeader className="text-left">
                     <DialogTitle className="text-lg leading-6 font-bold">
@@ -63,14 +80,14 @@ export function LogoutDialog({ open, onOpenChange }: Props) {
                         <Button
                             type="button"
                             variant="secondary"
-                            className="rounded-lg border border-hairline focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                            className="rounded-lg border border-hairline bg-surface! text-ink! hover:border-field hover:bg-canvas! focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                         >
                             Batal
                         </Button>
                     </DialogClose>
                     <Button
                         type="button"
-                        className="rounded-lg bg-danger text-danger-ink hover:bg-danger/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                        className="rounded-lg bg-danger! text-danger-ink! shadow-none! hover:bg-danger-ink! hover:text-danger! focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                         disabled={processing}
                         onClick={handleLogout}
                         data-test="confirm-logout-button"

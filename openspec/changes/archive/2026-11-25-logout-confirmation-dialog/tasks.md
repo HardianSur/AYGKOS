@@ -19,8 +19,8 @@
 
 ## 4. Verifikasi akhir
 
-- [ ] 4.1 Uji interaksi manual di browser pada sidebar: "Batal", Escape, dan klik overlay menutup dialog tanpa logout; "Keluar" mengakhiri sesi dan mengarahkan ke `/login`; verifikasi setiap jalur secara berurutan
-- [ ] 4.2 Uji navigasi keyboard (Tab dan Shift+Tab) saat dialog terbuka, pastikan fokus terjebak di dalam dialog dan kembali ke pemicu setelah ditutup; verifikasi tanpa error di konsol browser
+- [x] 4.1 Uji interaksi manual di browser pada sidebar: "Batal", Escape, dan klik overlay menutup dialog tanpa logout; "Keluar" mengakhiri sesi dan mengarahkan ke `/login`; verifikasi setiap jalur secara berurutan
+- [x] 4.2 Uji navigasi keyboard (Tab dan Shift+Tab) saat dialog terbuka, pastikan fokus terjebak di dalam dialog dan kembali ke pemicu setelah ditutup; verifikasi tanpa error di konsol browser
 - [ ] 4.3 Jalankan `npm run types:check`, `npm run check`, `npm run build`, dan `composer test`; verifikasi semuanya keluar dengan kode 0 dan `php artisan test --filter=AuthenticationTest` tetap hijau
 - [x] 4.4 Tinjau diff akhir: hanya enam berkas yang tercantum di `proposal.md` yang berubah, tanpa import mati, tanpa perubahan pada `verify-email.tsx`, dan tanpa perubahan pada `docs/ERD/erd.md` maupun `docs/FunctionalRequirment/functional_requirment.md` sehingga tidak ada versi dokumen lama yang perlu dimensiunkan ke `logs/` atau baris baru di `release.md`
 

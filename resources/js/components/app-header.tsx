@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -71,6 +71,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     const [logoutOpen, setLogoutOpen] = useState(false);
+    const userMenuButtonRef = useRef<HTMLButtonElement>(null);
 
     return (
         <>
@@ -216,6 +217,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
+                                    ref={userMenuButtonRef}
                                     variant="ghost"
                                     className="size-10 rounded-full p-1"
                                 >
@@ -251,7 +253,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
                 </div>
             )}
-            <LogoutDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
+            <LogoutDialog
+                open={logoutOpen}
+                onOpenChange={setLogoutOpen}
+                returnFocusRef={userMenuButtonRef}
+            />
         </>
     );
 }
