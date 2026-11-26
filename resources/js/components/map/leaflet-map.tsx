@@ -21,27 +21,43 @@ type LeafletMapProps = {
     center?: MapCenter;
     markers?: MapMarker[];
     radiusKm?: number;
+    onPick?: (center: MapCenter) => void;
     className?: string;
 };
 
 const DEFAULT_CENTER: MapCenter = { latitude: -2.5, longitude: 118 };
+const EMPTY_MARKERS: MapMarker[] = [];
+const PICK_ZOOM = 16;
 
 /**
  * Peta Leaflet yang dimuat secara dinamis dan hanya dipasang setelah
  * komponen ter-mount di klien. Leaflet mengakses `window` saat modul
  * dievaluasi, sehingga impor statis akan merusak prerender/SSR.
+ *
+ * Pemasangan peta tidak bergantung pada `center`; perubahan titik ditangani
+ * effect terpisah lewat `flyTo` agar instance peta tidak dibuang dan
+ * dibangun ulang pada setiap pemilihan titik.
  */
 export default function LeafletMap({
     apiKey,
-    center = DEFAULT_CENTER,
-    markers = [],
+    center,
+    markers = EMPTY_MARKERS,
     radiusKm,
+    onPick,
     className,
 }: LeafletMapProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<LeafletMapInstance | null>(null);
     const overlaysRef = useRef<LeafletLayerGroup | null>(null);
+    const initialCenterRef = useRef(center ?? DEFAULT_CENTER);
+    const onPickRef = useRef(onPick);
     const [ready, setReady] = useState(false);
+
+    const pickable = onPick !== undefined;
+    const latitude = center?.latitude;
+    const longitude = center?.longitude;
+
+    onPickRef.current = onPick;
 
     useEffect(() => {
         let cancelled = false;
@@ -54,12 +70,20 @@ export default function LeafletMap({
                 return;
             }
 
+            const initialCenter = initialCenterRef.current;
             const map = L.map(containerRef.current, {
-                center: [center.latitude, center.longitude],
+                center: [initialCenter.latitude, initialCenter.longitude],
                 zoom: radiusKm === undefined ? 5 : 11,
             });
             mapRef.current = map;
             overlaysRef.current = L.layerGroup().addTo(map);
+
+            map.on('click', (event) => {
+                onPickRef.current?.({
+                    latitude: event.latlng.lat,
+                    longitude: event.latlng.lng,
+                });
+            });
 
             L.tileLayer(
                 `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${encodeURIComponent(apiKey)}`,
@@ -80,7 +104,23 @@ export default function LeafletMap({
             mapRef.current = null;
             overlaysRef.current = null;
         };
-    }, [apiKey, center.latitude, center.longitude, radiusKm]);
+    }, [apiKey, radiusKm]);
+
+    useEffect(() => {
+        const map = mapRef.current;
+
+        if (!ready || map === null || latitude === undefined) {
+            return;
+        }
+
+        if (longitude === undefined) {
+            return;
+        }
+
+        map.flyTo([latitude, longitude], pickable ? PICK_ZOOM : map.getZoom(), {
+            duration: 0.6,
+        });
+    }, [latitude, longitude, pickable, ready]);
 
     useEffect(() => {
         let cancelled = false;
@@ -95,8 +135,12 @@ export default function LeafletMap({
 
             overlays.clearLayers();
 
+            if (latitude === undefined || longitude === undefined) {
+                return;
+            }
+
             if (radiusKm !== undefined) {
-                L.circle([center.latitude, center.longitude], {
+                L.circle([latitude, longitude], {
                     radius: radiusKm * 1000,
                     color: '#4B5563',
                     fillOpacity: 0.05,
@@ -108,12 +152,27 @@ export default function LeafletMap({
                     .bindPopup(marker.label)
                     .addTo(overlays);
             }
+
+            if (pickable) {
+                const pickMarker = L.marker([latitude, longitude], {
+                    draggable: true,
+                }).addTo(overlays);
+
+                pickMarker.on('dragend', () => {
+                    const position = pickMarker.getLatLng();
+
+                    onPickRef.current?.({
+                        latitude: position.lat,
+                        longitude: position.lng,
+                    });
+                });
+            }
         })();
 
         return () => {
             cancelled = true;
         };
-    }, [center.latitude, center.longitude, markers, radiusKm, ready]);
+    }, [latitude, longitude, markers, radiusKm, ready, pickable]);
 
     return (
         <div
