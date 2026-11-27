@@ -27,6 +27,8 @@ type LeafletMapProps = {
 
 const DEFAULT_CENTER: MapCenter = { latitude: -2.5, longitude: 118 };
 const EMPTY_MARKERS: MapMarker[] = [];
+const OVERVIEW_ZOOM = 5;
+const RADIUS_ZOOM = 11;
 const PICK_ZOOM = 16;
 
 /**
@@ -73,7 +75,7 @@ export default function LeafletMap({
             const initialCenter = initialCenterRef.current;
             const map = L.map(containerRef.current, {
                 center: [initialCenter.latitude, initialCenter.longitude],
-                zoom: radiusKm === undefined ? 5 : 11,
+                zoom: radiusKm === undefined ? OVERVIEW_ZOOM : RADIUS_ZOOM,
             });
             mapRef.current = map;
             overlaysRef.current = L.layerGroup().addTo(map);
@@ -117,10 +119,22 @@ export default function LeafletMap({
             return;
         }
 
-        map.flyTo([latitude, longitude], pickable ? PICK_ZOOM : map.getZoom(), {
+        const isDefaultCenter =
+            latitude === DEFAULT_CENTER.latitude &&
+            longitude === DEFAULT_CENTER.longitude;
+
+        const zoom = isDefaultCenter
+            ? radiusKm === undefined
+                ? OVERVIEW_ZOOM
+                : RADIUS_ZOOM
+            : pickable
+              ? PICK_ZOOM
+              : map.getZoom();
+
+        map.flyTo([latitude, longitude], zoom, {
             duration: 0.6,
         });
-    }, [latitude, longitude, pickable, ready]);
+    }, [latitude, longitude, pickable, radiusKm, ready]);
 
     useEffect(() => {
         let cancelled = false;
@@ -135,6 +149,12 @@ export default function LeafletMap({
 
             overlays.clearLayers();
 
+            for (const marker of markers) {
+                L.marker([marker.latitude, marker.longitude])
+                    .bindPopup(marker.label)
+                    .addTo(overlays);
+            }
+
             if (latitude === undefined || longitude === undefined) {
                 return;
             }
@@ -145,12 +165,6 @@ export default function LeafletMap({
                     color: '#4B5563',
                     fillOpacity: 0.05,
                 }).addTo(overlays);
-            }
-
-            for (const marker of markers) {
-                L.marker([marker.latitude, marker.longitude])
-                    .bindPopup(marker.label)
-                    .addTo(overlays);
             }
 
             if (pickable) {

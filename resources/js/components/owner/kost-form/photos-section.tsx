@@ -8,7 +8,11 @@ import type { KostForm } from './types';
 
 export function PhotosSection({ form }: { form: InertiaFormProps<KostForm> }) {
     const { setData } = form;
-    const photoError = form.errors.photos ?? form.errors['photos.0'];
+    const photoError =
+        form.errors.photos ??
+        Object.entries(form.errors).find(([key]) =>
+            key.startsWith('photos.'),
+        )?.[1];
 
     return (
         <FormSection
@@ -38,6 +42,10 @@ export function PhotosSection({ form }: { form: InertiaFormProps<KostForm> }) {
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
                         multiple
+                        aria-invalid={Boolean(photoError)}
+                        aria-describedby={
+                            photoError ? 'kost-photos-error' : undefined
+                        }
                         onChange={(event) => {
                             setData(
                                 'photos',
@@ -75,7 +83,7 @@ export function PhotosSection({ form }: { form: InertiaFormProps<KostForm> }) {
                     </>
                 )}
 
-                <InputError message={photoError} />
+                <InputError id="kost-photos-error" message={photoError} />
             </div>
         </FormSection>
     );

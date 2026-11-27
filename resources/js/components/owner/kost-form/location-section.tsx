@@ -86,8 +86,9 @@ export function LocationSection({
                         >
                             Cari lokasi
                         </Label>
-                        <div id="kost-location-search">
+                        <div>
                             <LocationAutocomplete
+                                id="kost-location-search"
                                 apiKey={geoapifyKey}
                                 onSelect={chooseSuggestion}
                                 placeholder="Cari nama tempat, jalan, atau kelurahan..."

@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Upload } from 'lucide-react';
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { BasicSection } from '@/components/owner/kost-form/basic-section';
 import { DocumentsSection } from '@/components/owner/kost-form/documents-section';
 import { FacilitiesSection } from '@/components/owner/kost-form/facilities-section';
@@ -14,6 +14,15 @@ import {
     type Rule,
 } from '@/components/owner/kost-form/types';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { create, index, store } from '@/routes/owner/kosts';
 
 export default function OwnerKostCreate({
@@ -25,6 +34,8 @@ export default function OwnerKostCreate({
     rules: Rule[];
     geoapifyKey: string | null;
 }) {
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     const form = useForm<KostForm>({
         name: '',
         address: '',
@@ -41,7 +52,18 @@ export default function OwnerKostCreate({
 
     function submit(event: FormEvent<HTMLFormElement>): void {
         event.preventDefault();
-        form.post(store.url(), { forceFormData: true });
+        setConfirmOpen(true);
+    }
+
+    function confirmSubmit(): void {
+        if (form.processing) {
+            return;
+        }
+
+        form.post(store.url(), {
+            forceFormData: true,
+            onFinish: () => setConfirmOpen(false),
+        });
     }
 
     return (
@@ -97,6 +119,46 @@ export default function OwnerKostCreate({
                         </Button>
                     </div>
                 </form>
+
+                <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <DialogContent
+                        className="rounded-xl border-hairline bg-surface text-ink shadow-[0_4px_16px_rgb(18_21_42/0.12)]"
+                        overlayClassName="bg-night/60"
+                    >
+                        <DialogHeader className="text-left">
+                            <DialogTitle className="text-lg leading-6 font-bold">
+                                Kirim pengajuan kost?
+                            </DialogTitle>
+                            <DialogDescription className="text-sm leading-[22px] text-ink-soft">
+                                Setelah dikirim, pengajuan akan menunggu
+                                verifikasi Admin dan tidak dapat diubah selama
+                                proses verifikasi. Pastikan data, titik lokasi,
+                                foto, dan dokumen sudah benar.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="gap-2">
+                            <DialogClose asChild>
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    className="h-10 rounded-lg"
+                                >
+                                    Periksa lagi
+                                </Button>
+                            </DialogClose>
+                            <Button
+                                type="button"
+                                onClick={confirmSubmit}
+                                disabled={form.processing}
+                                className="h-10 rounded-lg bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                            >
+                                {form.processing
+                                    ? 'Mengirim pengajuan…'
+                                    : 'Ya, kirim pengajuan'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     );

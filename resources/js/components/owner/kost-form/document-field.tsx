@@ -35,8 +35,10 @@ export function DocumentField({
                 id={id}
                 type="file"
                 accept="application/pdf"
+                required={required}
                 onChange={(event) => onChange(event.target.files?.[0] ?? null)}
                 aria-invalid={Boolean(error)}
+                aria-describedby={error ? `${id}-error` : undefined}
                 className={fileClass}
             />
             {file !== null && (
@@ -44,7 +46,7 @@ export function DocumentField({
                     Terpilih: {file.name}
                 </p>
             )}
-            <InputError message={error} />
+            <InputError id={`${id}-error`} message={error} />
         </div>
     );
 }

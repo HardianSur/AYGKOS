@@ -28,12 +28,21 @@ export function BasicSection({ form }: { form: InertiaFormProps<KostForm> }) {
                     autoComplete="off"
                     placeholder="Contoh: Kost Melati"
                     aria-invalid={Boolean(form.errors.name)}
+                    aria-describedby={
+                        form.errors.name ? 'kost-name-error' : undefined
+                    }
                     className={fieldClass}
                 />
-                <InputError message={form.errors.name} />
+                <InputError id="kost-name-error" message={form.errors.name} />
             </div>
 
-            <fieldset className="grid gap-3">
+            <fieldset
+                className="grid gap-3"
+                aria-invalid={Boolean(form.errors.type)}
+                aria-describedby={
+                    form.errors.type ? 'kost-type-error' : undefined
+                }
+            >
                 <legend className="mb-1 text-sm font-medium text-ink">
                     Tipe kost
                 </legend>
@@ -71,7 +80,7 @@ export function BasicSection({ form }: { form: InertiaFormProps<KostForm> }) {
                         );
                     })}
                 </div>
-                <InputError message={form.errors.type} />
+                <InputError id="kost-type-error" message={form.errors.type} />
             </fieldset>
 
             <div className="grid gap-2">
@@ -91,9 +100,17 @@ export function BasicSection({ form }: { form: InertiaFormProps<KostForm> }) {
                     maxLength={2000}
                     placeholder="Ceritakan suasana, keunggulan, dan lingkungan sekitar kost."
                     aria-invalid={Boolean(form.errors.description)}
+                    aria-describedby={
+                        form.errors.description
+                            ? 'kost-description-error'
+                            : undefined
+                    }
                     className={cn(textareaClass, 'min-h-28')}
                 />
-                <InputError message={form.errors.description} />
+                <InputError
+                    id="kost-description-error"
+                    message={form.errors.description}
+                />
             </div>
         </FormSection>
     );

@@ -26,6 +26,7 @@ type Paginated<T> = {
     current_page: number;
     last_page: number;
     total: number;
+    first_page_url: string;
     prev_page_url: string | null;
     next_page_url: string | null;
 };
@@ -85,8 +86,23 @@ export default function OwnerKostIndex({ kosts }: { kosts: Paginated<Kost> }) {
                     </Button>
                 </header>
 
-                {kosts.data.length === 0 ? (
+                {kosts.total === 0 ? (
                     <EmptyState />
+                ) : kosts.data.length === 0 ? (
+                    <>
+                        <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-field bg-surface px-6 py-10 text-center">
+                            <p className="text-sm leading-[22px] text-ink-soft">
+                                Halaman ini tidak berisi kost.
+                            </p>
+                            <Button variant="secondary" asChild>
+                                <Link href={kosts.first_page_url}>
+                                    Kembali ke halaman pertama
+                                </Link>
+                            </Button>
+                        </div>
+
+                        <Pagination kosts={kosts} />
+                    </>
                 ) : (
                     <>
                         <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

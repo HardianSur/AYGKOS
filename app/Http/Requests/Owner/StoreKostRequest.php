@@ -53,11 +53,13 @@ class StoreKostRequest extends FormRequest
             'facilities' => ['nullable', 'array'],
             'facilities.*' => [
                 'uuid',
+                'distinct',
                 Rule::exists('facilities', 'id')->where('scope', 'umum'),
             ],
             'rules' => ['nullable', 'array'],
             'rules.*' => [
                 'uuid',
+                'distinct',
                 Rule::exists('rules', 'id')->where('scope', 'kost'),
             ],
             'photos' => ['required', 'array', 'min:1', 'max:10'],

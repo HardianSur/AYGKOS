@@ -10,6 +10,7 @@ export type LocationSuggestion = {
 };
 
 type LocationAutocompleteProps = {
+    id?: string;
     apiKey: string;
     onSelect: (location: LocationSuggestion) => void;
     placeholder?: string;
@@ -40,6 +41,7 @@ const MAX_SUGGESTIONS = 10;
  * dibatalkan agar tidak membuang kredit API.
  */
 export default function LocationAutocomplete({
+    id,
     apiKey,
     onSelect,
     placeholder = 'Cari nama tempat atau alamat...',
@@ -114,6 +116,10 @@ export default function LocationAutocomplete({
                     results?: GeoapifyResult[];
                 };
 
+                if (controller.signal.aborted) {
+                    return;
+                }
+
                 const results = (data.results ?? [])
                     .slice(0, MAX_SUGGESTIONS)
                     .map((result) => ({
@@ -149,9 +155,12 @@ export default function LocationAutocomplete({
     }, [apiKey, debouncedQuery, minLength, quotaExceeded]);
 
     const choose = (suggestion: LocationSuggestion) => {
+        abortRef.current?.abort();
+        abortRef.current = null;
         selectedLabelRef.current = suggestion.label;
         setQuery(suggestion.label);
         setSuggestions([]);
+        setLoading(false);
         setOpen(false);
         setActiveIndex(-1);
         onSelect(suggestion);
@@ -186,6 +195,7 @@ export default function LocationAutocomplete({
     return (
         <div className="relative w-full">
             <input
+                id={id}
                 type="text"
                 value={query}
                 placeholder={placeholder}
