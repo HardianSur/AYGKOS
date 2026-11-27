@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Actions\StoreAvatar;
+use App\Actions\StoreImage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
@@ -32,7 +32,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request, StoreAvatar $storeAvatar): RedirectResponse
+    public function update(ProfileUpdateRequest $request, StoreImage $storeImage): RedirectResponse
     {
         $user = $request->user();
         $user->fill($request->safe()->except('avatar'));
@@ -49,7 +49,7 @@ class ProfileController extends Controller
             try {
                 /** @var UploadedFile $file */
                 $file = $request->file('avatar');
-                $user->forceFill(['avatar_path' => $storeAvatar->handle($file)])->save();
+                $user->forceFill(['avatar_path' => $storeImage->square($file)])->save();
 
                 if ($oldPath !== null) {
                     Storage::disk('public')->delete($oldPath);

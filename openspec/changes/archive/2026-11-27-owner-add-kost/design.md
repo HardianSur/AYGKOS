@@ -78,7 +78,7 @@ Effect overlay dipertahankan karena menangani marker, lingkaran radius, dan pemb
 
 ### Autocomplete: filter negara dan data kota
 
-`LocationSuggestion` ditambah `city` (dari `properties.city`, lalu `county`, lalu `state`) dan `address` (`properties.formatted`) hanya untuk prefill alamat, bukan penimpaan. Query ditambah `filter=countrycode:id`.
+`LocationSuggestion` ditambah `city` (`city`, lalu `county`, lalu `state`) dan `address` (`formatted`) hanya untuk prefill alamat, bukan penimpaan. Query autocomplete ditambah `filter=countrycode:id`, dan reverse geocode ditambah `type=city` karena tanpa itu hasil terdekat bisa berupa kode pos desa (mis. "Baros") alih-alih kota administratifnya. Dengan `format=json` Geoapify mengembalikan field datar (`lat`, `lon`, `city`, `formatted`) di akar objek, bukan di dalam `properties` seperti format GeoJSON.
 
 Kolom kota menyimpan penanda "sudah disunting manual" di state komponen; reverse geocode tidak menulis ke kota setelah penanda aktif. Penanda bukan state persisten: memuat ulang formulir mengosongkan semuanya.
 

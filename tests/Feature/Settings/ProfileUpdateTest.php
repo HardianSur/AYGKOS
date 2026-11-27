@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\StoreAvatar;
+use App\Actions\StoreImage;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -210,8 +210,8 @@ test('a failed photo replacement keeps the previous file', function () {
     Storage::disk('public')->put('avatars/lama.webp', 'old');
     $user->forceFill(['avatar_path' => 'avatars/lama.webp'])->save();
 
-    $this->mock(StoreAvatar::class)
-        ->shouldReceive('handle')
+    $this->mock(StoreImage::class)
+        ->shouldReceive('square')
         ->andThrow(new RuntimeException('disk penuh'));
 
     $this
@@ -321,7 +321,7 @@ test('deleting the account removes its avatar file', function () {
 test('the avatar action returns a relative path on the public disk', function () {
     Storage::fake('public');
 
-    $path = app(StoreAvatar::class)->handle(
+    $path = app(StoreImage::class)->square(
         UploadedFile::fake()->image('foto.jpg', 300, 600),
     );
 

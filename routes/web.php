@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Auth\WhatsappVerificationController;
+use App\Http\Controllers\Owner\KostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,15 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::post('facilities', [FacilityController::class, 'store'])->name('facilities.store');
         Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
         Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
+    });
+
+Route::middleware(['auth', 'verified', 'role:pemilik_kost'])
+    ->prefix('owner')
+    ->name('owner.')
+    ->group(function () {
+        Route::get('kosts', [KostController::class, 'index'])->name('kosts.index');
+        Route::get('kosts/create', [KostController::class, 'create'])->name('kosts.create');
+        Route::post('kosts', [KostController::class, 'store'])->name('kosts.store');
     });
 
 Route::middleware(['auth'])->group(function () {
