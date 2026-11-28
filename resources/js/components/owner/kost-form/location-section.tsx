@@ -73,7 +73,7 @@ export function LocationSection({
             description="Tandai titik kost pada peta. Titik ini yang dipakai pencari kost untuk menghitung jarak."
         >
             {geoapifyKey === null || geoapifyKey === '' ? (
-                <p className="rounded-md bg-[#FDECEA] px-3 py-2 text-sm leading-[22px] text-[#B42318] dark:bg-[#3D1E24] dark:text-[#FF8A80]">
+                <p className="rounded-md bg-status-rejected-bg px-3 py-2 text-sm leading-[22px] text-status-rejected">
                     Peta belum dikonfigurasi. Hubungi Admin agar kunci Geoapify
                     diisi sebelum mengajukan kost.
                 </p>

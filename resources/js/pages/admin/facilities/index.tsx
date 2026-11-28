@@ -161,7 +161,7 @@ export default function FacilityIndex({
                     <Button
                         type="button"
                         onClick={openCreate}
-                        className="h-10 rounded-lg bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                        className="h-10 rounded-lg bg-ember font-medium text-ink shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-canvas"
                     >
                         <Plus className="size-4" />
                         Tambah fasilitas
@@ -230,7 +230,7 @@ export default function FacilityIndex({
                                                         facility.scope ===
                                                         'umum'
                                                             ? 'inline-flex rounded-full bg-ember-wash px-2.5 py-0.5 text-xs font-bold text-ember-ink'
-                                                            : 'inline-flex rounded-full bg-[#EDEFF5] px-2.5 py-0.5 text-xs font-bold text-ink-soft dark:bg-[#2A3050]'
+                                                            : 'inline-flex rounded-full bg-status-inactive-bg px-2.5 py-0.5 text-xs font-bold text-status-inactive'
                                                     }
                                                 >
                                                     {
@@ -271,7 +271,7 @@ export default function FacilityIndex({
                                                         onClick={() =>
                                                             askDelete(facility)
                                                         }
-                                                        className="text-ink-soft hover:bg-[#FDECEA] hover:text-[#B42318] focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:hover:bg-[#3D1E24] dark:hover:text-[#FF8A80]"
+                                                        className="text-ink-soft hover:bg-status-rejected-bg hover:text-status-rejected focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
                                                     >
                                                         <Trash2 className="size-4" />
                                                     </Button>
@@ -294,7 +294,7 @@ export default function FacilityIndex({
             </div>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="border-hairline bg-surface text-ink shadow-[0_4px_16px_rgb(18_21_42/0.12)]">
+                <DialogContent className="border-hairline bg-surface text-ink shadow-floating">
                     <DialogHeader>
                         <DialogTitle className="text-lg leading-6 font-bold">
                             {editing === null
@@ -422,7 +422,7 @@ export default function FacilityIndex({
                             <Button
                                 type="submit"
                                 disabled={form.processing}
-                                className="bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                                className="bg-ember font-medium text-ink shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-canvas"
                             >
                                 {form.processing ? 'Menyimpan…' : 'Simpan'}
                             </Button>
@@ -439,7 +439,7 @@ export default function FacilityIndex({
                     }
                 }}
             >
-                <DialogContent className="border-hairline bg-surface text-ink shadow-[0_4px_16px_rgb(18_21_42/0.12)]">
+                <DialogContent className="border-hairline bg-surface text-ink shadow-floating">
                     <DialogHeader>
                         <DialogTitle className="text-lg leading-6 font-bold">
                             Hapus fasilitas?

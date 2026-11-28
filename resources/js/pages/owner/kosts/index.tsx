@@ -32,16 +32,11 @@ type Paginated<T> = {
 };
 
 const statusStyles: Record<KostStatus, string> = {
-    menunggu_verifikasi:
-        'bg-[#E8F0FB] text-[#1D4F91] dark:bg-[#1B2B4F] dark:text-[#7DB2FF]',
-    disetujui:
-        'bg-[#E6F4EC] text-[#0C7A45] dark:bg-[#14352A] dark:text-[#5BD68F]',
-    ditolak:
-        'bg-[#FDECEA] text-[#B42318] dark:bg-[#3D1E24] dark:text-[#FF8A80]',
-    ditangguhkan:
-        'bg-[#FDECEA] text-[#B42318] dark:bg-[#3D1E24] dark:text-[#FF8A80]',
-    nonaktif:
-        'bg-[#EDEFF5] text-[#5E6580] dark:bg-[#2A3050] dark:text-[#A4ABC8]',
+    menunggu_verifikasi: 'bg-status-pending-bg text-status-pending',
+    disetujui: 'bg-status-approved-bg text-status-approved',
+    ditolak: 'bg-status-rejected-bg text-status-rejected',
+    ditangguhkan: 'bg-status-rejected-bg text-status-rejected',
+    nonaktif: 'bg-status-inactive-bg text-status-inactive',
 };
 
 const statusLabels: Record<KostStatus, string> = {
@@ -77,7 +72,7 @@ export default function OwnerKostIndex({ kosts }: { kosts: Paginated<Kost> }) {
 
                     <Button
                         asChild
-                        className="h-10 rounded-lg bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                        className="h-10 rounded-lg bg-ember font-medium text-ink shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-canvas"
                     >
                         <Link href={create()}>
                             <Plus className="size-4" />
@@ -171,7 +166,7 @@ function KostCard({ kost }: { kost: Kost }) {
                 </dl>
 
                 {showReason && (
-                    <p className="rounded-md bg-[#FDECEA] px-3 py-2 text-sm leading-[22px] text-[#B42318] dark:bg-[#3D1E24] dark:text-[#FF8A80]">
+                    <p className="rounded-md bg-status-rejected-bg px-3 py-2 text-sm leading-[22px] text-status-rejected">
                         <span className="font-bold">Alasan: </span>
                         {kost.status_reason}
                     </p>
@@ -199,7 +194,7 @@ function EmptyState() {
             </div>
             <Button
                 asChild
-                className="h-10 rounded-lg bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                className="h-10 rounded-lg bg-ember font-medium text-ink shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-canvas"
             >
                 <Link href={create()}>
                     <Plus className="size-4" />
