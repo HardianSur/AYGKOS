@@ -55,8 +55,8 @@ export function LogoutDialog({ open, onOpenChange, returnFocusRef }: Props) {
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent
-                className="rounded-xl border-hairline bg-surface text-ink shadow-[0_4px_16px_rgb(18_21_42/0.12)]"
-                overlayClassName="bg-night/60"
+                className="rounded-xl border-hairline bg-surface text-ink shadow-floating"
+                overlayClassName="bg-scrim"
                 showCloseButton={false}
                 onCloseAutoFocus={(event) => {
                     if (loggingOut.current || !returnFocusRef?.current) {

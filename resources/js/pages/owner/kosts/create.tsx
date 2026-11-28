@@ -110,7 +110,7 @@ export default function OwnerKostCreate({
                         <Button
                             type="submit"
                             disabled={form.processing}
-                            className="h-10 rounded-lg bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                            className="h-10 rounded-lg bg-ember font-medium text-ink shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-canvas"
                         >
                             <Upload className="size-4" />
                             {form.processing
@@ -122,8 +122,8 @@ export default function OwnerKostCreate({
 
                 <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                     <DialogContent
-                        className="rounded-xl border-hairline bg-surface text-ink shadow-[0_4px_16px_rgb(18_21_42/0.12)]"
-                        overlayClassName="bg-night/60"
+                        className="rounded-xl border-hairline bg-surface text-ink shadow-floating"
+                        overlayClassName="bg-scrim"
                     >
                         <DialogHeader className="text-left">
                             <DialogTitle className="text-lg leading-6 font-bold">
@@ -150,7 +150,7 @@ export default function OwnerKostCreate({
                                 type="button"
                                 onClick={confirmSubmit}
                                 disabled={form.processing}
-                                className="h-10 rounded-lg bg-ember font-medium text-[#1B2038] shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-[#12152A]"
+                                className="h-10 rounded-lg bg-ember font-medium text-ink shadow-none hover:bg-ember/90 focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:text-canvas"
                             >
                                 {form.processing
                                     ? 'Mengirim pengajuan…'

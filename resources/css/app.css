@@ -66,20 +66,30 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
-    --color-night: var(--brand-night);
-    --color-night-ink: var(--brand-night-ink);
-    --color-night-soft: var(--brand-night-soft);
     --color-canvas: var(--brand-canvas);
     --color-surface: var(--brand-surface);
+    --color-surface-raised: var(--brand-surface-raised);
     --color-ink: var(--brand-ink);
     --color-ink-soft: var(--brand-ink-soft);
     --color-hairline: var(--brand-hairline);
     --color-field: var(--brand-field);
+    --color-scrim: var(--brand-scrim);
     --color-ember: var(--brand-ember);
     --color-ember-ink: var(--brand-ember-ink);
     --color-ember-wash: var(--brand-ember-wash);
     --color-danger: var(--brand-danger);
     --color-danger-ink: var(--brand-danger-ink);
+
+    --color-status-approved: var(--status-approved);
+    --color-status-approved-bg: var(--status-approved-bg);
+    --color-status-pending: var(--status-pending);
+    --color-status-pending-bg: var(--status-pending-bg);
+    --color-status-rejected: var(--status-rejected);
+    --color-status-rejected-bg: var(--status-rejected-bg);
+    --color-status-inactive: var(--status-inactive);
+    --color-status-inactive-bg: var(--status-inactive-bg);
+
+    --shadow-floating: 0 4px 16px rgb(27 32 56 / 0.12);
 }
 
 :root {
@@ -102,11 +112,11 @@
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
+    --chart-1: #b54708;
+    --chart-2: #c2410c;
+    --chart-3: #d97706;
+    --chart-4: #5e6580;
+    --chart-5: #1b2038;
     --radius: 0.625rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -119,30 +129,30 @@
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
+    --background: var(--brand-canvas);
+    --foreground: var(--brand-ink);
+    --card: var(--brand-surface);
+    --card-foreground: var(--brand-ink);
+    --popover: var(--brand-surface);
+    --popover-foreground: var(--brand-ink);
     --primary: oklch(0.985 0 0);
     --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+    --secondary: var(--brand-surface-raised);
+    --secondary-foreground: var(--brand-ink);
+    --muted: var(--brand-surface-raised);
+    --muted-foreground: var(--brand-ink-soft);
+    --accent: var(--brand-surface-raised);
+    --accent-foreground: var(--brand-ink);
     --destructive: oklch(0.396 0.141 25.723);
     --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
+    --border: var(--brand-hairline);
+    --input: var(--brand-hairline);
+    --ring: var(--brand-ink);
+    --chart-1: #ff8a2b;
+    --chart-2: #ffb366;
+    --chart-3: #ffc933;
+    --chart-4: #989fad;
+    --chart-5: #6e7687;
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.985 0 0);
@@ -155,34 +165,68 @@
 
 /* Brand palette from docs/DESIGN.md — additive, does not replace the shadcn theme above. */
 :root {
-    --brand-night: #12152a;
-    --brand-night-ink: #f3f4fa;
-    --brand-night-soft: #a4abc8;
     --brand-canvas: #f7f8fc;
     --brand-surface: #ffffff;
+    --brand-surface-raised: #ffffff;
     --brand-ink: #1b2038;
     --brand-ink-soft: #5e6580;
     --brand-hairline: #d8dce8;
     --brand-field: #7d879f;
+    --brand-scrim: rgb(27 32 56 / 0.55);
     --brand-ember: #ff7a1a;
     --brand-ember-ink: #b54708;
     --brand-ember-wash: #fff1e6;
     --brand-danger: #b42318;
     --brand-danger-ink: #fdecea;
+
+    --status-approved: #0c7a45;
+    --status-approved-bg: #e6f4ec;
+    --status-pending: #1d4f91;
+    --status-pending-bg: #e8f0fb;
+    --status-rejected: #b42318;
+    --status-rejected-bg: #fdecea;
+    --status-inactive: #5e6580;
+    --status-inactive-bg: #edeff5;
 }
 
 .dark {
-    --brand-canvas: #12152a;
-    --brand-surface: #202748;
-    --brand-ink: #f3f4fa;
-    --brand-ink-soft: #a4abc8;
-    --brand-hairline: #414a7c;
-    --brand-field: #7a83a8;
+    --brand-canvas: #101317;
+    --brand-surface: #24282e;
+    --brand-surface-raised: #2f333b;
+    --brand-ink: #dde0e4;
+    --brand-ink-soft: #989fad;
+    --brand-hairline: #3d424d;
+    --brand-field: #6e7687;
+    --brand-scrim: rgb(16 19 23 / 0.6);
     --brand-ember: #ff8a2b;
     --brand-ember-ink: #ff8a2b;
     --brand-ember-wash: #3b2a20;
     --brand-danger: #ff8a80;
-    --brand-danger-ink: #12152a;
+    --brand-danger-ink: #101317;
+
+    --status-approved: #5bd68f;
+    --status-approved-bg: #0f3d2c;
+    --status-pending: #7db2ff;
+    --status-pending-bg: #22375f;
+    --status-rejected: #ff8a80;
+    --status-rejected-bg: #522a31;
+    --status-inactive: #a4abc8;
+    --status-inactive-bg: #303654;
+}
+
+/* Elevation in dark mode comes from surfaces and borders, not shadows. */
+.dark .shadow,
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-floating {
+    --tw-shadow: 0 0 #0000;
+}
+
+/* shadcn floating surfaces sit one level above the card in dark mode. */
+.dark [data-slot='dropdown-menu-content'],
+.dark [data-slot='select-content'] {
+    background-color: var(--brand-surface-raised);
 }
 
 @layer base {
